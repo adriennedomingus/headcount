@@ -11,13 +11,11 @@ class DistrictRepository
   end
 
   def find_by_name(district_name)
-    matches = []
     @district_objects.each do |district|
       if district.name == district_name.upcase
-        matches << district
+        return district
       end
     end
-    matches
   end
 
   def find_all_matching(name_fragment)

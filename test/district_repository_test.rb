@@ -6,27 +6,27 @@ class DistrictRepositoryTest < MiniTest::Test
 
   def test_loads_data
     dr = DistrictRepository.new
-    dr.load_data({:enrollment => {:kindergarten => "../data/Kindergartners in full-day program.csv"}})
+    dr.load_data({:enrollment => {:kindergarten => "./data/Kindergartners in full-day program.csv"}})
 
     assert_equal "ADAMS COUNTY 14", dr.district_objects[2].name
   end
 
   def test_find_by_name_method_returns_instantiated_object_name
     dr = DistrictRepository.new
-    dr.load_data({:enrollment => {:kindergarten => "../data/Kindergartners in full-day program.csv"}})
-    assert_equal "ADAMS-ARAPAHOE 28J", dr.find_by_name("ADAMS-ARAPAHOE 28J")[0].name
+    dr.load_data({:enrollment => {:kindergarten => "./data/Kindergartners in full-day program.csv"}})
+    assert_equal "ADAMS-ARAPAHOE 28J", dr.find_by_name("ADAMS-ARAPAHOE 28J").name
   end
 
   def test_find_by_name_is_case_insensitive
     dr = DistrictRepository.new
-    dr.load_data({:enrollment => {:kindergarten => "../data/Kindergartners in full-day program.csv"}})
+    dr.load_data({:enrollment => {:kindergarten => "./data/Kindergartners in full-day program.csv"}})
 
-    assert_equal "ADAMS-ARAPAHOE 28J", dr.find_by_name("Adams-Arapahoe 28J")[0].name
+    assert_equal "ADAMS-ARAPAHOE 28J", dr.find_by_name("Adams-Arapahoe 28J").name
   end
 
   def test_find_all_matching
     dr = DistrictRepository.new
-    dr.load_data({:enrollment => {:kindergarten => "../data/Kindergartners in full-day program.csv"}})
+    dr.load_data({:enrollment => {:kindergarten => "./data/Kindergartners in full-day program.csv"}})
     matching_names = []
     dr.find_all_matching("Adams").each do |district|
       matching_names << district.name

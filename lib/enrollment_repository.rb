@@ -27,7 +27,14 @@ class EnrollmentRepository
     @enrollment_objects
   end
 
-  def find_by_name
+  def find_by_name(name)
+    matches = []
+    @enrollment_objects.each do |enrollment|
+      if name.upcase == enrollment.data[:name]
+        matches << enrollment
+      end
+    end
+    matches
   end
 
 end
