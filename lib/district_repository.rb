@@ -8,34 +8,47 @@ class DistrictRepository
   def initialize
     @districts = []
     @district_objects = []
-    @contents = CSV.open"../data/Kindergartners_in_full-day_program.csv", headers: true, header_converters: :symbol
   end
 
   def find_by_name(district_name)
     matches = []
     @district_objects.each do |district|
-      if district.name == district_name
+      if district.name == district_name.upcase
         matches << district
       end
     end
     matches
   end
 
-  def find_all_matching
+  def find_all_matching(name_fragment)
+    matches = []
+    @district_objects.each do |district|
+      if district.name.include?(name_fragment.upcase)
+        matches << district
+      end
+    end
+    matches
   end
 
-  def load_data
+  def read_file(hash)
+    hash.each do |category, path|
+      @category = hash[category]
+    end
+    @category.each do |file_contents, file_to_open|
+      @file = @category[file_contents]
+    end
+    @contents = CSV.open @file, headers: true, header_converters: :symbol
+  end
+
+  def load_data(hash)
+    read_file(hash)
     @contents.each do |row|
       @districts << row[:location]
     end
     @districts.uniq!
-    @districts.delete_at(0)
     @districts.each do |district|
        @district_objects << District.new({:name => district})
     end
     @district_objects
   end
 end
-
-d = DistrictRepository.new
-d.load_data
