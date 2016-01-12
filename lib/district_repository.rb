@@ -12,9 +12,10 @@ class DistrictRepository
   end
 
   def find_by_name(district_name)
+    #returns an instance of District
     @district_objects.each do |district|
       if district.name == district_name.upcase
-        return district
+        district
       end
     end
   end
@@ -48,9 +49,18 @@ class DistrictRepository
     @districts.each do |district|
        @district_objects << District.new({:name => district})
     end
-    @district_objects.each do |district_object|
-      EnrollmentRepository.new
-    end
+    create_enrollment_repo(hash)
     @district_objects
   end
+
+  def create_enrollment_repo(hash)
+    EnrollmentRepository.new.load_data(hash)
+  end
+
+  #def first_step
+    #dr.load data
+      #returns Array of district objects connected to name
+    #WANT to create Enroll Repo and load data
+      #return Array of Enroll objects
+  #end
 end

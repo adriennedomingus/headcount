@@ -28,13 +28,21 @@ class EnrollmentRepository
   end
 
   def find_by_name(name)
+    #returns a hash that can be taken as the argument to create a new enrollment object
     matches = []
     @enrollment_objects.each do |enrollment|
       if name.upcase == enrollment.data[:name]
         matches << enrollment
       end
     end
-    matches
+    # matches
+    new_hash = matches[0].data
+    matches.each do |match|
+      match.data[:kindergarten_participation].each do |year, participation|
+        new_hash[:kindergarten_participation][year] = participation
+      end
+    end
+    new_hash
   end
 
 end
