@@ -34,4 +34,11 @@ class DistrictRepositoryTest < MiniTest::Test
 
     assert_equal ["ADAMS COUNTY 14", "ADAMS-ARAPAHOE 28J"], matching_names
   end
+
+  def test_starting_relationships_layer
+    dr = DistrictRepository.new
+    dr.load_data({:enrollment => {:kindergarten => "./data/Kindergartners in full-day program.csv"}})
+    district = dr.find_by_name("ACADEMY 20")
+    assert_equal 0.391, district.enrollment.kindergarten_participation_in_year(2010)
+  end
 end

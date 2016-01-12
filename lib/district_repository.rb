@@ -1,5 +1,6 @@
 require 'csv'
 require_relative 'district'
+require_relative 'enrollment_repository'
 
 class DistrictRepository
 
@@ -46,6 +47,9 @@ class DistrictRepository
     @districts.uniq!
     @districts.each do |district|
        @district_objects << District.new({:name => district})
+    end
+    @district_objects.each do |district_object|
+      EnrollmentRepository.new
     end
     @district_objects
   end

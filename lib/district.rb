@@ -6,4 +6,7 @@ class District
     @name = name[:name].upcase
   end
 
+  def enrollment
+  end
+
 end
