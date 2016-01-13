@@ -4,7 +4,7 @@ require_relative 'enrollment_repository'
 
 class DistrictRepository
 
-  attr_reader :district_objects
+  attr_reader :district_objects, :er
 
   def initialize
     @district_objects = []
@@ -14,7 +14,7 @@ class DistrictRepository
     #returns an instance of District with an enrollment parameter :name =>"ACA", :kindergarten=>{year,participation}
     find_name_matches(district_name)
     enrollment_matches = []
-    @er.each do |enrollment_object|
+    @er.enrollment_objects.each do |enrollment_object|
       if enrollment_object.data[:name] == @district.name
         enrollment_matches << enrollment_object.data[:kindergarten_participation]
       end
@@ -61,7 +61,10 @@ class DistrictRepository
     read_file(hash)
     districts = read_locations_from_contents
     create_district_objects(districts)
-    @er = create_enrollment_repository(hash)
+    @er = EnrollmentRepository.new
+    @er.load_data(hash)
+    # require "pry"
+    # binding.pry
     upcase_names_in_enrollment_repository
     @district_objects
   end
@@ -78,12 +81,12 @@ class DistrictRepository
     end.uniq!
   end
 
-  def create_enrollment_repository(hash)
-    EnrollmentRepository.new.load_data(hash)
-  end
+  # def create_enrollment_repository(hash)
+  #   EnrollmentRepository.new.load_data(hash)
+  # end
 
   def upcase_names_in_enrollment_repository
-    @er.each do |enrollment_object|
+    @er.enrollment_objects.each do |enrollment_object|
       enrollment_object.data[:name] = enrollment_object.data[:name].upcase
     end
   end

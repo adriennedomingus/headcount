@@ -7,7 +7,7 @@ class DistrictRepositoryTest < MiniTest::Test
   def test_loads_data
     dr = DistrictRepository.new
     dr.load_data({:enrollment => {:kindergarten => "./data/Kindergartners in full-day program.csv"}})
-    
+
     assert_equal "ADAMS COUNTY 14", dr.district_objects[2].name
   end
 
