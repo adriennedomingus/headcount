@@ -4,20 +4,34 @@ require_relative 'enrollment_repository'
 
 class DistrictRepository
 
-  attr_accessor :districts, :district_objects
+  attr_accessor :district_objects
 
   def initialize
-    @districts = []
+    # @districts = []
     @district_objects = []
   end
 
   def find_by_name(district_name)
-    #returns an instance of District
+    #returns an instance of District with an enrollment thing :name =>"ACA", :kindergarten=>{year,part}
+    @enrollment_matches = []
     @district_objects.each do |district|
       if district.name == district_name.upcase
-        district
+        @district = district
       end
     end
+    @er.each do |enrollment_object|
+      if enrollment_object.data[:name] == @district.name
+        @enrollment_matches << enrollment_object.data[:kindergarten_participation]
+      end
+    end
+    @enrollment_data = @enrollment_matches[0]
+    @enrollment_matches.each do |hash|
+      hash.each do |year, participation|
+        @enrollment_data[year] = participation
+      end
+    end
+    @district.enrollment = Enrollment.new({:name => @district.name, :kindergarten_participation => @enrollment_data})
+    @district
   end
 
   def find_all_matching(name_fragment)
@@ -41,26 +55,20 @@ class DistrictRepository
   end
 
   def load_data(hash)
+    districts = []
     read_file(hash)
     @contents.each do |row|
-      @districts << row[:location]
+      districts << row[:location]
     end
-    @districts.uniq!
-    @districts.each do |district|
+    districts.uniq!
+    districts.each do |district|
        @district_objects << District.new({:name => district})
     end
-    create_enrollment_repo(hash)
+    @er = create_enrollment_repo(hash)
     @district_objects
   end
 
   def create_enrollment_repo(hash)
     EnrollmentRepository.new.load_data(hash)
   end
-
-  #def first_step
-    #dr.load data
-      #returns Array of district objects connected to name
-    #WANT to create Enroll Repo and load data
-      #return Array of Enroll objects
-  #end
 end

@@ -6,8 +6,6 @@ class EnrollmentTest < MiniTest::Test
 
   def test_it_has_a_name
     e = Enrollment.new({:name => "ACADEMY 20", :kindergarten_participation => {2010 => 0.3915, 2011 => 0.35356, 2012 => 0.2677}})
-    require "pry"
-    binding.pry
     assert_equal "ACADEMY 20", e.name
   end
 

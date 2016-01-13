@@ -8,8 +8,6 @@ class EnrollmentRepositoryTest < MiniTest::Test
     er = EnrollmentRepository.new
     er.load_data({:enrollment => {:kindergarten => "./data/Kindergartners in full-day program.csv"}})
     result = {:name=>"ACADEMY 20", :kindergarten_participation=>{2010=>0.43628}}
-    require "pry"
-    binding.pry
     assert_equal result, er.enrollment_objects[17].data
   end
 
@@ -17,9 +15,7 @@ class EnrollmentRepositoryTest < MiniTest::Test
     er = EnrollmentRepository.new
     er.load_data({:enrollment => {:kindergarten => "./data/Kindergartners in full-day program.csv"}})
     result = er.find_by_name("ADAMS-ARAPAHOE 28J")
-    require "pry"
-    binding.pry
-
+    
     assert_equal true, result.include?(:kindergarten_participation)
     assert_equal "ADAMS-ARAPAHOE 28J", result[:name]
   end

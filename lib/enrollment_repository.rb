@@ -3,7 +3,7 @@ require_relative 'enrollment'
 
 class EnrollmentRepository
 
-  attr_accessor :enrollment_objects
+  attr_accessor :enrollment_objects, :data
 
   def initialize
     @enrollment_objects = []
