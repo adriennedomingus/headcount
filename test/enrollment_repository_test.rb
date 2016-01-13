@@ -61,4 +61,13 @@ class EnrollmentRepositoryTest < MiniTest::Test
     enrollment = er.find_by_name("ADAMS COUNTY 14")
     assert_equal result, enrollment.graduation_rate_by_year
   end
+
+  def test_can_find_graduation_rate_in_year_after_find_by_name
+    er = EnrollmentRepository.new
+    er.load_data({:enrollment => {:kindergarten => "./data/Kindergartners in full-day program.csv", :high_school_graduation => "./data/High school graduation rates.csv"}})
+    result = 0.891
+
+    enrollment = er.find_by_name("ADAMS COUNTY 14")
+    assert_equal result, enrollment.graduation_rate_in_year(2011)
+  end
 end

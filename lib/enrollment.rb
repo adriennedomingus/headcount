@@ -22,4 +22,8 @@ class Enrollment
     #write another test for this in er, running through the whole thing
     data[:high_school_graduation]
   end
+
+  def graduation_rate_in_year(year)
+    data[:high_school_graduation][year]
+  end
 end
