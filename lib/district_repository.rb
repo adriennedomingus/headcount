@@ -4,34 +4,37 @@ require_relative 'enrollment_repository'
 
 class DistrictRepository
 
-  attr_accessor :district_objects
+  attr_reader :district_objects
 
   def initialize
-    # @districts = []
     @district_objects = []
   end
 
   def find_by_name(district_name)
-    #returns an instance of District with an enrollment thing :name =>"ACA", :kindergarten=>{year,part}
-    @enrollment_matches = []
+    #returns an instance of District with an enrollment parameter :name =>"ACA", :kindergarten=>{year,participation}
+    find_name_matches(district_name)
+    enrollment_matches = []
+    @er.each do |enrollment_object|
+      if enrollment_object.data[:name] == @district.name
+        enrollment_matches << enrollment_object.data[:kindergarten_participation]
+      end
+    end
+    enrollment_data = enrollment_matches[0]
+    enrollment_matches.each do |hash|
+      hash.each do |year, participation|
+        enrollment_data[year] = participation
+      end
+    end
+    @district.enrollment = Enrollment.new({:name => @district.name, :kindergarten_participation => enrollment_data})
+    @district
+  end
+
+  def find_name_matches(district_name)
     @district_objects.each do |district|
       if district.name == district_name.upcase
         @district = district
       end
     end
-    @er.each do |enrollment_object|
-      if enrollment_object.data[:name] == @district.name
-        @enrollment_matches << enrollment_object.data[:kindergarten_participation]
-      end
-    end
-    @enrollment_data = @enrollment_matches[0]
-    @enrollment_matches.each do |hash|
-      hash.each do |year, participation|
-        @enrollment_data[year] = participation
-      end
-    end
-    @district.enrollment = Enrollment.new({:name => @district.name, :kindergarten_participation => @enrollment_data})
-    @district
   end
 
   def find_all_matching(name_fragment)
@@ -48,30 +51,40 @@ class DistrictRepository
     hash.each do |category, path|
       @category = hash[category]
     end
-    @category.each do |file_contents, file_to_open|
+    @category.each_key do |file_contents|
       @file = @category[file_contents]
     end
     @contents = CSV.open @file, headers: true, header_converters: :symbol
   end
 
   def load_data(hash)
-    districts = []
     read_file(hash)
-    @contents.each do |row|
-      districts << row[:location]
-    end
-    districts.uniq!
-    districts.each do |district|
-       @district_objects << District.new({:name => district})
-    end
-    @er = create_enrollment_repo(hash)
-    @er.each do |enrollment_object|
-      enrollment_object.data[:name] = enrollment_object.data[:name].upcase
-    end
+    districts = read_locations_from_contents
+    create_district_objects(districts)
+    @er = create_enrollment_repository(hash)
+    upcase_names_in_enrollment_repository
     @district_objects
   end
 
-  def create_enrollment_repo(hash)
+  def create_district_objects(districts)
+    @district_objects = districts.map do |district|
+       District.new({:name => district})
+    end
+  end
+
+  def read_locations_from_contents
+    @contents.map do |row|
+      row[:location]
+    end.uniq!
+  end
+
+  def create_enrollment_repository(hash)
     EnrollmentRepository.new.load_data(hash)
+  end
+
+  def upcase_names_in_enrollment_repository
+    @er.each do |enrollment_object|
+      enrollment_object.data[:name] = enrollment_object.data[:name].upcase
+    end
   end
 end

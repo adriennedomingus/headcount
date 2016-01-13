@@ -3,7 +3,7 @@ require_relative 'enrollment'
 
 class EnrollmentRepository
 
-  attr_accessor :enrollment_objects, :data
+  attr_reader :enrollment_objects, :data
 
   def initialize
     @enrollment_objects = []
@@ -22,20 +22,20 @@ class EnrollmentRepository
   def load_data(hash)
     read_file(hash)
     @contents.each do |row|
-      @enrollment_objects << Enrollment.new({:name => row[:location], :kindergarten_participation => {row[:timeframe].to_i => row[:data].to_f}})
+      enrollment_objects << Enrollment.new({:name => row[:location], :kindergarten_participation => {row[:timeframe].to_i => row[:data].to_f}})
     end
-    @enrollment_objects
+    enrollment_objects
   end
 
   def find_by_name(name)
     #returns a hash that can be taken as the argument to create a new enrollment object
+    #matches is an array of enrollment objects
     matches = []
-    @enrollment_objects.each do |enrollment|
+    enrollment_objects.each do |enrollment|
       if name.upcase == enrollment.data[:name]
         matches << enrollment
       end
     end
-    # matches
     new_hash = matches[0].data
     matches.each do |match|
       match.data[:kindergarten_participation].each do |year, participation|

@@ -2,7 +2,7 @@ require_relative 'district_repository'
 
 class HeadcountAnalyst
 
-  attr_accessor :dr, :district1, :district2
+  attr_reader :dr, :district1, :district2
 
   def initialize(district_respository)
     @dr = district_respository
@@ -20,8 +20,8 @@ class HeadcountAnalyst
 
   def calcultate_average(district)
     total = 0
-    district.enrollment.data[:kindergarten_participation].each_value do |value|
-      total += truncate_value(value)
+    district.enrollment.data[:kindergarten_participation].each_value do |participation|
+      total += truncate_value(participation)
     end
     average = truncate_value(total)/district.enrollment.data[:kindergarten_participation].length
     truncate_value(average)
@@ -29,11 +29,11 @@ class HeadcountAnalyst
 
   def kindergarten_participation_rate_variation_trend(district1, district2)
     result = Hash.new
-    @district1_participation = @dr.find_by_name(district1).enrollment.data[:kindergarten_participation]
-    @district2_participation = @dr.find_by_name(district2[:against]).enrollment.data[:kindergarten_participation]
-    @district1_participation.each do |key, value|
+    district1_participation = @dr.find_by_name(district1).enrollment.data[:kindergarten_participation]
+    district2_participation = @dr.find_by_name(district2[:against]).enrollment.data[:kindergarten_participation]
+    district1_participation.each do |key, value|
       d1_truncated_value = truncate_value(value)
-      d2_truncated_value = truncate_value(@district2_participation[key])
+      d2_truncated_value = truncate_value(district2_participation[key])
       result[key] = truncate_value(d1_truncated_value/d2_truncated_value)
     end
     result
