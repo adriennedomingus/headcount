@@ -25,4 +25,11 @@ class HeadcountAnalystTest < MiniTest::Test
     assert_equal "ACADEMY 20", ha.district1.name
     assert_equal "COLORADO", ha.district2.name
   end
+
+  def test_calculates_average
+    ha = HeadcountAnalyst.new(DistrictRepository.new)
+    ha.kindergarten_participation_rate_variation('ACADEMY 20', :against => 'COLORADO')
+
+    assert_equal "", ha.calcultate_average(ha.district1)
+  end
 end

@@ -15,7 +15,7 @@ class EnrollmentRepositoryTest < MiniTest::Test
     er = EnrollmentRepository.new
     er.load_data({:enrollment => {:kindergarten => "./data/Kindergartners in full-day program.csv"}})
     result = er.find_by_name("ADAMS-ARAPAHOE 28J")
-    
+
     assert_equal true, result.include?(:kindergarten_participation)
     assert_equal "ADAMS-ARAPAHOE 28J", result[:name]
   end
