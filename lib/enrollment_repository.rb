@@ -49,7 +49,8 @@ class EnrollmentRepository
         matches << enrollment
       end
     end
-    add_enrollment_data(matches)
+    hash = add_enrollment_data(matches)
+    Enrollment.new(hash)
   end
 
   def add_enrollment_data(matches)

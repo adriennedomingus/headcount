@@ -28,4 +28,11 @@ class EnrollmentTest < MiniTest::Test
     assert_equal nil, e.kindergarten_participation_in_year(1995)
   end
 
+  def test_returns_graduation_rate_by_year
+    e = Enrollment.new({:name=>"ADAMS-ARAPAHOE 28J",:kindergarten_participation=>{2007=>0.47359,2006=>0.37013,2005=>0.20176,2004=>0.17444,2008=>0.47965,2009=>0.73,2010=>0.92209,2011=>0.95,2012=>0.97359,2013=>0.9767,2014=>0.97123},:high_school_graduation=>{2010=>0.903, 2011=>0.891, 2012=>0.85455, 2013=>0.88333, 2014=>0.91}})
+
+  result = {2010=>0.903, 2011=>0.891, 2012=>0.85455, 2013=>0.88333, 2014=>0.91}
+  assert_equal result, e.graduation_rate_by_year
+  end
+
 end

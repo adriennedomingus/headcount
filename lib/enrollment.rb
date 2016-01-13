@@ -11,10 +11,15 @@ class Enrollment
   end
 
   def kindergarten_participation_by_year
-    num = data[:kindergarten_participation]
+    data[:kindergarten_participation]
   end
 
   def kindergarten_participation_in_year(year)
     data[:kindergarten_participation][year]
+  end
+
+  def graduation_rate_by_year
+    #write another test for this in er, running through the whole thing
+    data[:high_school_graduation]
   end
 end
