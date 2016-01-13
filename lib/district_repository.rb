@@ -65,6 +65,9 @@ class DistrictRepository
        @district_objects << District.new({:name => district})
     end
     @er = create_enrollment_repo(hash)
+    @er.each do |enrollment_object|
+      enrollment_object.data[:name] = enrollment_object.data[:name].upcase
+    end
     @district_objects
   end
 
