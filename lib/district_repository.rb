@@ -19,7 +19,7 @@ class DistrictRepository
         enrollment_matches << enrollment_object.data[:kindergarten_participation]
       end
     end
-    enrollment_data = enrollment_matches[0]
+    enrollment_data = Hash.new
     enrollment_matches.each do |hash|
       hash.each do |year, participation|
         enrollment_data[year] = participation

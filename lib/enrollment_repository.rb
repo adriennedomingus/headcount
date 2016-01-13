@@ -36,13 +36,16 @@ class EnrollmentRepository
         matches << enrollment
       end
     end
-    new_hash = matches[0].data
-    matches.each do |match|
-      match.data[:kindergarten_participation].each do |year, participation|
-        new_hash[:kindergarten_participation][year] = participation
-      end
-    end
-    new_hash
+    add_enrollment_data(matches)
   end
 
+  def add_enrollment_data(matches)
+    district_with_enrollment = matches[0].data
+    matches.each do |match|
+      match.data[:kindergarten_participation].each do |year, participation|
+        district_with_enrollment[:kindergarten_participation][year] = participation
+      end
+    end
+    district_with_enrollment
+  end
 end
