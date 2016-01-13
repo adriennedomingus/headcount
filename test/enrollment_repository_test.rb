@@ -70,4 +70,7 @@ class EnrollmentRepositoryTest < MiniTest::Test
     enrollment = er.find_by_name("ADAMS COUNTY 14")
     assert_equal result, enrollment.graduation_rate_in_year(2011)
   end
+
+  #test kindergarten participation
+
 end

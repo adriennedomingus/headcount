@@ -43,10 +43,9 @@ class EnrollmentRepository
   def find_by_name(name)
     #returns a hash that can be taken as the argument to create a new enrollment object
     #matches is an array of enrollment objects
-    matches = []
-    enrollment_objects.each do |enrollment|
-      if name.upcase == enrollment.data[:name]
-        matches << enrollment
+    matches = enrollment_objects.select do |enrollment|
+      if name.upcase == enrollment.data[:name].upcase
+        enrollment
       end
     end
     hash = add_enrollment_data(matches)

@@ -63,8 +63,6 @@ class DistrictRepository
     create_district_objects(districts)
     @er = EnrollmentRepository.new
     @er.load_data(hash)
-    # require "pry"
-    # binding.pry
     upcase_names_in_enrollment_repository
     @district_objects
   end
@@ -80,10 +78,6 @@ class DistrictRepository
       row[:location]
     end.uniq!
   end
-
-  # def create_enrollment_repository(hash)
-  #   EnrollmentRepository.new.load_data(hash)
-  # end
 
   def upcase_names_in_enrollment_repository
     @er.enrollment_objects.each do |enrollment_object|
