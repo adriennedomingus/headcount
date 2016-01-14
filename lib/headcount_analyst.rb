@@ -62,7 +62,17 @@ class HeadcountAnalyst
   end
 
   def kindergarten_participation_correlates_with_high_school_graduation(district)
-    if district[:for] != "STATEWIDE"
+    if district.keys == [:across]
+      aggregated_results = []
+      district[:across].each do |district_name|
+        aggregated_results << kindergarten_graduation_correlation(district_name)
+      end
+      if aggregated_results.count(true)/aggregated_results.length > 0.7
+        true
+      else
+        false
+      end
+    elsif district[:for] != "STATEWIDE"
       kindergarten_graduation_correlation(district[:for])
     else
       aggregated_results = []
