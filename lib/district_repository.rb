@@ -14,9 +14,17 @@ class DistrictRepository
     #returns an instance of District with an enrollment parameter :name =>"ACA", :kindergarten=>{year,participation}
     find_name_matches(district_name)
     enrollment_matches = []
+    hs_graduation_matches = []
     @er.enrollment_objects.each do |enrollment_object|
       if enrollment_object.data[:name] == @district.name
         enrollment_matches << enrollment_object.data[:kindergarten_participation]
+      end
+    end
+    @er.enrollment_objects.each do |enrollment_object|
+      if enrollment_object.data[:high_school_graduation]
+        if enrollment_object.data[:name] == @district.name
+          hs_graduation_matches << enrollment_object.data[:high_school_graduation]
+        end
       end
     end
     enrollment_data = Hash.new
@@ -25,7 +33,13 @@ class DistrictRepository
         enrollment_data[year] = participation
       end
     end
-    @district.enrollment = Enrollment.new({:name => @district.name, :kindergarten_participation => enrollment_data})
+    hs_graduation_data = Hash.new
+    hs_graduation_matches.each do |hash|
+      hash.each do |year, graduation_rate|
+        hs_graduation_data[year] = graduation_rate
+      end
+    end
+    @district.enrollment = Enrollment.new({:name => @district.name, :kindergarten_participation => enrollment_data, :high_school_graduation => hs_graduation_data})
     @district
   end
 

@@ -24,17 +24,15 @@ class EnrollmentRepository
   def load_data(hash)
     read_file(hash)
     @kindergarten_contents.each do |row|
-      enrollment_objects << Enrollment.new({:name => row[:location], :kindergarten_participation => {row[:timeframe].to_i => row[:data].to_f}})
+      enrollment_objects << Enrollment.new({:name => row[:location], :kindergarten_participation => {row[:timeframe].to_i => row[:data].to_f}, :high_school_graduation => {}})
     end
     enrollment_objects
     if @hs_graduation_contents
       @hs_graduation_contents.each do |row|
         enrollment_objects.each do |enrollment_object|
-          enrollment_object.data[:kindergarten_participation].each do |year, participation|
-            if year == row[:timeframe].to_i
-              enrollment_object.data[:high_school_graduation] = {row[:timeframe].to_i => row[:data].to_f}
+            if row[:location] == enrollment_object.name
+              enrollment_object.data[:high_school_graduation][row[:timeframe].to_i] = row[:data].to_f
             end
-          end
         end
       end
     end
