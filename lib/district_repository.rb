@@ -1,6 +1,7 @@
 require 'csv'
 require_relative 'district'
 require_relative 'enrollment_repository'
+require_relative 'statewide_test_repository'
 
 class DistrictRepository
 
@@ -33,6 +34,13 @@ class DistrictRepository
         enrollment_data[year] = participation
       end
     end
+    if @str
+      @str.statewide_objects.each do |statewide_object|
+        if statewide_object.data[:name] == @district.name
+          @statewide_object = statewide_object
+        end
+      end
+    end
     hs_graduation_data = Hash.new
     hs_graduation_matches.each do |hash|
       hash.each do |year, graduation_rate|
@@ -40,6 +48,9 @@ class DistrictRepository
       end
     end
     @district.enrollment = Enrollment.new({:name => @district.name, :kindergarten_participation => enrollment_data, :high_school_graduation => hs_graduation_data})
+    if @str
+      @district.statewide_test = StatewideTest.new(@statewide_object.data)
+    end
     @district
   end
 
@@ -76,7 +87,11 @@ class DistrictRepository
     districts = read_locations_from_contents
     create_district_objects(districts)
     @er = EnrollmentRepository.new
-    @er.load_data(hash)
+    @er.load_data({:enrollment => hash[:enrollment]})
+    if hash[:statewide_testing]
+      @str = StatewideTestRepository.new
+      @str.load_data({:statewide_testing => hash[:statewide_testing]})
+    end
     upcase_names_in_enrollment_repository
     @district_objects
   end
