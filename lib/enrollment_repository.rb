@@ -26,7 +26,7 @@ class EnrollmentRepository
     @kindergarten_contents.each do |row|
       enrollment_objects << Enrollment.new({:name => row[:location], :kindergarten_participation => {row[:timeframe].to_i => row[:data].to_f}, :high_school_graduation => {}})
     end
-    enrollment_objects
+    #enrollment_objects
     if @hs_graduation_contents
       @hs_graduation_contents.each do |row|
         enrollment_objects.each do |enrollment_object|
