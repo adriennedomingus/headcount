@@ -32,7 +32,7 @@ class StatewideTestRepository
       else
         if statewide_objects.any? { |statewide_object| statewide_object.name == row[:location] }
           add_data_to_existing_object(row, :third_grade, :score)
-        else #only do this if NONE of them match the name, not just if the current one doesn't match the name
+        else #only do this if NONE of them match the name
           create_blank_statewide_test_object(row)
         end
         @eighth_grade_contents.each do |row|
