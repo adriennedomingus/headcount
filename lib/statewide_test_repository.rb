@@ -74,6 +74,8 @@ class StatewideTestRepository
 
   def find_by_name(name)
     statewide_objects.select do |statewide|
+      require "pry"
+      binding.pry
       if name.upcase == statewide.data[:name].upcase
         return statewide
       end
