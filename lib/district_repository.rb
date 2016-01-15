@@ -16,29 +16,12 @@ class DistrictRepository
     find_name_matches(district_name)
     enrollment_matches = []
     hs_graduation_matches = []
-    @er.enrollment_objects.each do |enrollment_object|
-      if enrollment_object.data[:name] == @district.name
-        enrollment_matches << enrollment_object.data[:kindergarten_participation]
-      end
-    end
-    @er.enrollment_objects.each do |enrollment_object|
-      if enrollment_object.data[:high_school_graduation]
-        if enrollment_object.data[:name] == @district.name
-          hs_graduation_matches << enrollment_object.data[:high_school_graduation]
-        end
-      end
-    end
+    add_data_to_matches(enrollment_matches, :kindergarten_participation)
+    add_data_to_matches(hs_graduation_matches, :high_school_graduation)
     enrollment_data = Hash.new
     enrollment_matches.each do |hash|
       hash.each do |year, participation|
         enrollment_data[year] = participation
-      end
-    end
-    if @str
-      @str.statewide_objects.each do |statewide_object|
-        if statewide_object.data[:name] == @district.name
-          @statewide_object = statewide_object
-        end
       end
     end
     hs_graduation_data = Hash.new
@@ -49,9 +32,26 @@ class DistrictRepository
     end
     @district.enrollment = Enrollment.new({:name => @district.name, :kindergarten_participation => enrollment_data, :high_school_graduation => hs_graduation_data})
     if @str
-      @district.statewide_test = StatewideTest.new(@statewide_object.data)
+      add_statewide_test_object_to_match
     end
     @district
+  end
+
+  def add_statewide_test_object_to_match
+    @str.statewide_objects.each do |statewide_object|
+      if statewide_object.data[:name] == @district.name
+        @statewide_object = statewide_object
+      end
+    end
+    @district.statewide_test = StatewideTest.new(@statewide_object.data)
+  end
+
+  def add_data_to_matches(matches, data)
+    @er.enrollment_objects.each do |enrollment_object|
+      if enrollment_object.data[:name] == @district.name
+        matches << enrollment_object.data[data]
+      end
+    end
   end
 
   def find_name_matches(district_name)
@@ -86,14 +86,22 @@ class DistrictRepository
     read_file(hash)
     districts = read_locations_from_contents
     create_district_objects(districts)
-    @er = EnrollmentRepository.new
-    @er.load_data({:enrollment => hash[:enrollment]})
+    create_enrollment_repository(hash)
     if hash[:statewide_testing]
-      @str = StatewideTestRepository.new
-      @str.load_data({:statewide_testing => hash[:statewide_testing]})
+      create_statewide_test_repository(hash)
     end
     upcase_names_in_enrollment_repository
     @district_objects
+  end
+
+  def create_enrollment_repository(hash)
+    @er = EnrollmentRepository.new
+    @er.load_data({:enrollment => hash[:enrollment]})
+  end
+
+  def create_statewide_test_repository(hash)
+    @str = StatewideTestRepository.new
+    @str.load_data({:statewide_testing => hash[:statewide_testing]})
   end
 
   def create_district_objects(districts)

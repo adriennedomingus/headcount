@@ -28,79 +28,48 @@ class StatewideTestRepository
     read_file(hash)
     @third_grade_contents.each do |row|
       if statewide_objects.empty?
-        statewide_objects << StatewideTest.new({:name => row[:location],
-        :third_grade => {},
-        :eighth_grade => {},
-        :math => {},
-        :reading => {},
-        :writing => {}})
+        create_blank_statewide_test_object(row)
       else
-        @third_grade_contents.each do |row|
-          if statewide_objects.any? { |statewide_object| statewide_object.name == row[:location] }
-            statewide_objects.each do |statewide_object|
-              if row[:location] == statewide_object.name
-                if statewide_object.data[:third_grade][row[:timeframe].to_i]
-                  statewide_object.data[:third_grade][row[:timeframe].to_i][row[:score].downcase.to_sym] = row[:data].to_f
-                else
-                  statewide_object.data[:third_grade][row[:timeframe].to_i] = {row[:score].downcase.to_sym => row[:data].to_f}
-                end
-              end
-            end
-          else #only do this if NONE of them match the name, not just if the current one doesn't match the name
-            statewide_objects << StatewideTest.new({:name => row[:location],
-            :third_grade => {},
-            :eighth_grade => {},
-            :math => {},
-            :reading => {},
-            :writing => {}})
-          end
+        if statewide_objects.any? { |statewide_object| statewide_object.name == row[:location] }
+          add_data_to_existing_object(row, :third_grade, :score)
+        else #only do this if NONE of them match the name, not just if the current one doesn't match the name
+          create_blank_statewide_test_object(row)
         end
         @eighth_grade_contents.each do |row|
-          statewide_objects.each do |statewide_object|
-            if row[:location] == statewide_object.name
-              if statewide_object.data[:eighth_grade][row[:timeframe].to_i]
-                statewide_object.data[:eighth_grade][row[:timeframe].to_i][row[:score].downcase.to_sym] = row[:data].to_f
-              else
-                statewide_object.data[:eighth_grade][row[:timeframe].to_i] = {row[:score].downcase.to_sym => row[:data].to_f}
-              end
-            end
-          end
+          add_data_to_existing_object(row, :eighth_grade, :score)
         end
         @math_contents.each do |row|
-          statewide_objects.each do |statewide_object|
-            if row[:location] == statewide_object.name
-              if statewide_object.data[:math][row[:timeframe].to_i]
-                statewide_object.data[:math][row[:timeframe].to_i][row[:race_ethnicity].gsub(/\W/, "_").downcase.to_sym] = row[:data].to_f
-              else
-                statewide_object.data[:math][row[:timeframe].to_i] = {row[:race_ethnicity].gsub(/\W/, "_").downcase.to_sym => row[:data].to_f}
-              end
-            end
-          end
+          add_data_to_existing_object(row, :math, :race_ethnicity)
         end
         @reading_contents.each do |row|
-          statewide_objects.each do |statewide_object|
-            if row[:location] == statewide_object.name
-              if statewide_object.data[:reading][row[:timeframe].to_i]
-                statewide_object.data[:reading][row[:timeframe].to_i][row[:race_ethnicity].gsub(/\W/, "_").downcase.to_sym] = row[:data].to_f
-              else
-                statewide_object.data[:reading][row[:timeframe].to_i] = {row[:race_ethnicity].gsub(/\W/, "_").downcase.to_sym => row[:data].to_f}
-              end
-            end
-          end
+          add_data_to_existing_object(row, :reading, :race_ethnicity)
         end
         @writing_contents.each do |row|
-          statewide_objects.each do |statewide_object|
-            if row[:location] == statewide_object.name
-              if statewide_object.data[:writing][row[:timeframe].to_i]
-                statewide_object.data[:writing][row[:timeframe].to_i][row[:race_ethnicity].gsub(/\W/, "_").downcase.to_sym] = row[:data].to_f
-              else
-                statewide_object.data[:writing][row[:timeframe].to_i] = {row[:race_ethnicity].gsub(/\W/, "_").downcase.to_sym => row[:data].to_f}
-              end
-            end
-          end
+          add_data_to_existing_object(row, :writing, :race_ethnicity)
         end
       end
     end
+  end
+
+  def add_data_to_existing_object(row, subject, delimeter)
+    statewide_objects.each do |statewide_object|
+      if row[:location] == statewide_object.name
+        if statewide_object.data[subject][row[:timeframe].to_i]
+          statewide_object.data[subject][row[:timeframe].to_i][row[delimeter].gsub(/\W/, "_").downcase.to_sym] = row[:data].to_f
+        else
+          statewide_object.data[subject][row[:timeframe].to_i] = {row[delimeter].gsub(/\W/, "_").downcase.to_sym => row[:data].to_f}
+        end
+      end
+    end
+  end
+
+  def create_blank_statewide_test_object(row)
+    statewide_objects << StatewideTest.new({:name => row[:location],
+    :third_grade => {},
+    :eighth_grade => {},
+    :math => {},
+    :reading => {},
+    :writing => {}})
   end
 
   def find_by_name(name)
