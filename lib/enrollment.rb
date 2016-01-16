@@ -1,5 +1,4 @@
 class Enrollment
-
   attr_reader :data, :name
 
   def initialize(data)
@@ -19,7 +18,6 @@ class Enrollment
   end
 
   def graduation_rate_by_year
-    #write another test for this in er, running through the whole thing
     data[:high_school_graduation]
   end
 

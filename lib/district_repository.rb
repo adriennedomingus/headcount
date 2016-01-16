@@ -40,6 +40,7 @@ class DistrictRepository
           @statewide_object = statewide_object
         end
       end
+      @district.statewide_test = StatewideTest.new(@statewide_object.data)
     end
     hs_graduation_data = Hash.new
     hs_graduation_matches.each do |hash|
@@ -48,9 +49,6 @@ class DistrictRepository
       end
     end
     @district.enrollment = Enrollment.new({:name => @district.name, :kindergarten_participation => enrollment_data, :high_school_graduation => hs_graduation_data})
-    if @str
-      @district.statewide_test = StatewideTest.new(@statewide_object.data)
-    end
     @district
   end
 
