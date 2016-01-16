@@ -8,20 +8,18 @@ class StatewideTestRepository
     @statewide_objects = []
   end
 
-  def read_file(hash)
-    hash.each do |category, path|
-      @category = hash[category]
-    end
-    @grade_3 = @category[:third_grade]
-    @third_grade_contents = CSV.open @grade_3, headers: true, header_converters: :symbol
-    @grade_8 = @category[:eighth_grade]
-    @eighth_grade_contents = CSV.open @grade_8, headers: true, header_converters: :symbol
-    @math = @category[:math]
-    @math_contents = CSV.open @math, headers: true, header_converters: :symbol
-    @reading = @category[:reading]
-    @reading_contents = CSV.open @reading, headers: true, header_converters: :symbol
-    @writing = @category[:writing]
-    @writing_contents = CSV.open @writing, headers: true, header_converters: :symbol
+  def read_file(category)
+    # category = hash[:statewide_testing]
+
+    @third_grade_contents = csv_open(category[:third_grade])
+    @eighth_grade_contents = csv_open(category[:eighth_grade])
+    @math_contents = csv_open(category[:math])
+    @reading_contents = csv_open(category[:reading])
+    @writing_contents = csv_open(category[:writing])
+  end
+
+  def csv_open(path)
+    CSV.open path, headers: true, header_converters: :symbol
   end
 
   def load_data(hash)
@@ -41,15 +39,23 @@ class StatewideTestRepository
         @eighth_grade_contents.each do |row|
           add_data_to_existing_statewide_object(row, :eighth_grade, :score)
         end
-        @math_contents.each do |row|
-          add_data_to_existing_statewide_object(row, :math, :race_ethnicity)
-        end
-        @reading_contents.each do |row|
-          add_data_to_existing_statewide_object(row, :reading, :race_ethnicity)
-        end
-        @writing_contents.each do |row|
-          add_data_to_existing_statewide_object(row, :writing, :race_ethnicity)
-        end
+
+        load_subject_data
+      end
+    end
+  end
+
+  def load_subject_data
+    contents_hash = {
+      # eigth_grade: @eighth_grade_contents,
+      math: @math_contents,
+      reading: @reading_contents,
+      writing: @writing_contents
+    }
+    contents_hash.each do |subject, contents|
+      contents.each do |row|
+        # column = (subject == :eighth_grade ? :score : :race_ethnicity)
+        add_data_to_existing_statewide_object(row, subject, :race_ethnicity) #rename type
       end
     end
   end

@@ -72,10 +72,10 @@ class DistrictRepository
 
   def read_file(hash)
     hash.each do |category, path|
-      @category = hash[category]
+      category = hash[category]
     end
-    @category.each_key do |file_contents|
-      @file = @category[file_contents]
+    category.each_key do |file_contents|
+      @file = category[file_contents]
     end
     @contents = CSV.open @file, headers: true, header_converters: :symbol
   end
@@ -88,7 +88,7 @@ class DistrictRepository
     @er.load_data({:enrollment => hash[:enrollment]})
     if hash[:statewide_testing]
       @str = StatewideTestRepository.new
-      @str.load_data({:statewide_testing => hash[:statewide_testing]})
+      @str.load_data(hash[:statewide_testing])
     end
     upcase_names_in_enrollment_repository
     @district_objects

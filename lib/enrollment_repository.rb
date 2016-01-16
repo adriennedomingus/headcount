@@ -11,15 +11,27 @@ class EnrollmentRepository
 
   def read_file(hash)
     hash.each do |category, path|
-      @category = hash[category]
+      category = hash[category]
     end
-    @file1 = @category[:kindergarten]
+    #make @file1 and @file2 local vars
+    @file1 = category[:kindergarten]
     @kindergarten_contents = CSV.open @file1, headers: true, header_converters: :symbol
-    if @category[:high_school_graduation]
-      @file2 = @category[:high_school_graduation]
+    if category[:high_school_graduation]
+      @file2 = category[:high_school_graduation]
       @hs_graduation_contents = CSV.open @file2, headers: true, header_converters: :symbol
+      # @hs_graduation_contents = Utils.csv_open(file2)
     end
   end
+
+# class CSVHelper
+#   def self.openfile
+# end
+
+class Utils
+  def self.csv_open(path)
+
+  end
+end
 
   def load_data(hash)
     read_file(hash)

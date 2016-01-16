@@ -7,12 +7,12 @@ class StatewideTestRepositoryTest < MiniTest::Test
   def test_loads_data
     skip
     str = StatewideTestRepository.new
-    str.load_data({:statewide_testing => {
+    str.load_data({
       :third_grade => "./data/3rd grade students scoring proficient or above on the CSAP_TCAP.csv",
       :eighth_grade => "./data/8th grade students scoring proficient or above on the CSAP_TCAP.csv",
       :math => "./data/Average proficiency on the CSAP_TCAP by race_ethnicity_ Math.csv",
       :reading => "./data/Average proficiency on the CSAP_TCAP by race_ethnicity_ Reading.csv",
-      :writing => "./data/Average proficiency on the CSAP_TCAP by race_ethnicity_ Writing.csv"}})
+      :writing => "./data/Average proficiency on the CSAP_TCAP by race_ethnicity_ Writing.csv"})
 
     result = {:math=>0.6942, :writing=>0.69377, :reading=>0.81747}
     assert_equal result, str.statewide_objects[17].data[:eighth_grade][2012]
@@ -20,12 +20,12 @@ class StatewideTestRepositoryTest < MiniTest::Test
 
   def test_finds_by_name
     str = StatewideTestRepository.new
-    str.load_data({:statewide_testing => {
+    str.load_data({
       :third_grade => "./data/3rd grade students scoring proficient or above on the CSAP_TCAP.csv",
       :eighth_grade => "./data/8th grade students scoring proficient or above on the CSAP_TCAP.csv",
       :math => "./data/Average proficiency on the CSAP_TCAP by race_ethnicity_ Math.csv",
       :reading => "./data/Average proficiency on the CSAP_TCAP by race_ethnicity_ Reading.csv",
-      :writing => "./data/Average proficiency on the CSAP_TCAP by race_ethnicity_ Writing.csv"}})
+      :writing => "./data/Average proficiency on the CSAP_TCAP by race_ethnicity_ Writing.csv"})
 
     result = str.find_by_name("ADAMS-ARAPAHOE 28J")
     math_result = {:all_students=>0.37735, :asian=>0.4859, :black=>0.2916, :hawaiian_pacific_islander=>0.4438, :hispanic=>0.3356, :native_american=>0.4438, :two_or_more=>0.4452, :white=>0.5502}
@@ -37,12 +37,12 @@ class StatewideTestRepositoryTest < MiniTest::Test
 
   def test_unknown_data_errors
     str = StatewideTestRepository.new
-    str.load_data({:statewide_testing => {
+    str.load_data({
       :third_grade => "./data/3rd grade students scoring proficient or above on the CSAP_TCAP.csv",
       :eighth_grade => "./data/8th grade students scoring proficient or above on the CSAP_TCAP.csv",
       :math => "./data/Average proficiency on the CSAP_TCAP by race_ethnicity_ Math.csv",
       :reading => "./data/Average proficiency on the CSAP_TCAP by race_ethnicity_ Reading.csv",
-      :writing => "./data/Average proficiency on the CSAP_TCAP by race_ethnicity_ Writing.csv"}})
+      :writing => "./data/Average proficiency on the CSAP_TCAP by race_ethnicity_ Writing.csv"})
     testing = str.find_by_name("AULT-HIGHLAND RE-9")
 
     assert_raises(UnknownDataError) do
