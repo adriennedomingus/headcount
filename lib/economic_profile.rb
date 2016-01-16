@@ -1,3 +1,5 @@
+require_relative 'unknown_data_error'
+
 class EconomicProfile
   attr_reader :data, :name
 
@@ -10,7 +12,10 @@ class EconomicProfile
   end
 
   def median_household_income_in_year(year)
-    #UNKNOWNDATAERROR
+    years = (2005..2013).to_a
+    if !years.include?(year)
+      raise UnknownDataError
+    end
     sum = 0
     divisor = 0
     data_to_analyze = data[:median_household_income]
@@ -32,18 +37,34 @@ class EconomicProfile
   end
 
   def children_in_poverty_in_year(year)
-    data[:children_in_poverty][:percent][year]
+    if data[:children_in_poverty][year]
+      data[:children_in_poverty][year]
+    else
+      raise UnknownDataError
+    end
   end
 
   def free_or_reduced_price_lunch_percentage_in_year(year)
-    data[:free_or_reduced_price_lunch][:percent][year]
+    if data[:free_or_reduced_price_lunch][year][:percentage]
+      data[:free_or_reduced_price_lunch][year][:percentage]
+    else
+      raise UnknownDataError
+    end
   end
 
   def free_or_reduced_price_lunch_number_in_year(year)
-    data[:free_or_reduced_price_lunch][:number][year]
+    if data[:free_or_reduced_price_lunch][year][:total]
+      data[:free_or_reduced_price_lunch][year][:total]
+    else
+      raise UnknownDataError
+    end
   end
 
   def title_i_in_year(year)
-    data[:title_i][year]
+    if data[:title_i][year]
+      data[:title_i][year]
+    else
+      raise UnknownDataError
+    end
   end
 end

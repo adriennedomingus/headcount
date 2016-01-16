@@ -28,8 +28,8 @@ class EconomicProfileRepository
       if economic_profile_objects.empty?
         economic_profile_objects << EconomicProfile.new({:name => row[:location],
         :median_household_income => {},
-        :children_in_poverty => {:percent => {}, :number => {}},
-        :free_or_reduced_price_lunch => {:percent => {}, :number => {}},
+        :children_in_poverty => {},
+        :free_or_reduced_price_lunch => {:percentage => {}, :total => {}},
         :title_i => {}})
       else
         @mhi_contents.each do |row|
@@ -42,8 +42,8 @@ class EconomicProfileRepository
           else #only do this if NONE of them match the name, not just if the current one doesn't match the name
             economic_profile_objects << EconomicProfile.new({:name => row[:location],
             :median_household_income => {},
-            :children_in_poverty => {:percent => {}, :number => {}},
-            :free_or_reduced_price_lunch => {:percent => {}, :number => {}},
+            :children_in_poverty => {},
+            :free_or_reduced_price_lunch => {},
             :title_i => {}})
             economic_profile_objects.each do |economic_profile_object|
               if row[:location] == economic_profile_object.name
@@ -55,22 +55,28 @@ class EconomicProfileRepository
         @cip_contents.each do |row|
           economic_profile_objects.each do |economic_profile_object|
             if row[:location] == economic_profile_object.name
-              if row[:dataformat] == "Percent"
-                economic_profile_object.data[:children_in_poverty][:percent][row[:timeframe].to_i] = row[:data].to_f
-              elsif row[:dataformat] == "Number"
-                economic_profile_object.data[:children_in_poverty][:number][row[:timeframe].to_i] = row[:data].to_i
-              end
+              economic_profile_object.data[:children_in_poverty][row[:timeframe].to_i] = row[:data].to_f
             end
           end
         end
         @frl_contents.each do |row|
           economic_profile_objects.each do |economic_profile_object|
             if row[:location] == economic_profile_object.name
-              if row[:poverty_level] == "Eligible for Free or Reduced Lunch"
-                if row[:dataformat] == "Percent"
-                  economic_profile_object.data[:free_or_reduced_price_lunch][:percent][row[:timeframe].to_i] = row[:data].to_f
-                elsif row[:dataformat] == "Number"
-                  economic_profile_object.data[:free_or_reduced_price_lunch][:number][row[:timeframe].to_i] = row[:data].to_i
+              if economic_profile_object.data[:free_or_reduced_price_lunch][row[:timeframe].to_i]
+                if row[:poverty_level] == "Eligible for Free or Reduced Lunch"
+                  if row[:dataformat] == "Percent"
+                    economic_profile_object.data[:free_or_reduced_price_lunch][row[:timeframe].to_i][:percentage] = row[:data].to_f
+                  elsif row[:dataformat] == "Number"
+                    economic_profile_object.data[:free_or_reduced_price_lunch][row[:timeframe].to_i][:total] = row[:data].to_i
+                  end
+                end
+              else
+                if row[:poverty_level] == "Eligible for Free or Reduced Lunch"
+                  if row[:dataformat] == "Percent"
+                    economic_profile_object.data[:free_or_reduced_price_lunch][row[:timeframe].to_i] = {:percentage => row[:data].to_f}
+                  elsif row[:dataformat] == "Number"
+                    economic_profile_object.data[:free_or_reduced_price_lunch][row[:timeframe].to_i] = {:total => row[:data].to_i}
+                  end
                 end
               end
             end
