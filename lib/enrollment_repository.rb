@@ -26,7 +26,6 @@ class EnrollmentRepository
     @kindergarten_contents.each do |row|
       enrollment_objects << Enrollment.new({:name => row[:location], :kindergarten_participation => {row[:timeframe].to_i => row[:data].to_f}, :high_school_graduation => {}})
     end
-    #enrollment_objects
     if @hs_graduation_contents
       @hs_graduation_contents.each do |row|
         enrollment_objects.each do |enrollment_object|
@@ -39,8 +38,6 @@ class EnrollmentRepository
   end
 
   def find_by_name(name)
-    #returns a hash that can be taken as the argument to create a new enrollment object
-    #matches is an array of enrollment objects
     matches = enrollment_objects.select do |enrollment|
       if name.upcase == enrollment.data[:name].upcase
         enrollment
@@ -52,17 +49,19 @@ class EnrollmentRepository
 
   def add_enrollment_data(matches)
     district_with_enrollment = matches[0].data
-    district_with_enrollment[:high_school_graduation] = {}
     matches.each do |match|
-      match.data[:kindergarten_participation].each do |year, participation|
-        district_with_enrollment[:kindergarten_participation][year] = participation
-      end
+      add_participation_information(district_with_enrollment, match, :kindergarten_participation)
       if match.data[:high_school_graduation]
-        match.data[:high_school_graduation].each do |year, participation|
-          district_with_enrollment[:high_school_graduation][year] = participation
-        end
+        district_with_enrollment[:high_school_graduation] = {}
+        add_participation_information(district_with_enrollment, match, :high_school_graduation)
       end
     end
     district_with_enrollment
+  end
+
+  def add_participation_information(district_with_enrollment, match, dataset)
+    match.data[dataset].each do |year, participation|
+      district_with_enrollment[dataset][year] = participation
+    end
   end
 end

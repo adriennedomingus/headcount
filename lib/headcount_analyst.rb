@@ -62,18 +62,16 @@ class HeadcountAnalyst
   end
 
   def kindergarten_participation_correlates_with_high_school_graduation(district)
-    #dealing with arrays - can we use map or other enumerable?
-    aggregated = []
     if district.keys == [:across]
-      district[:across].each do |district_name|
-        aggregated << kindergarten_graduation_correlation(district_name)
+      aggregated = district[:across].map do |district_name|
+        kindergarten_graduation_correlation(district_name)
       end
       aggregated.count(true)/aggregated.length > 0.7 ? true : false
     elsif district[:for] != "STATEWIDE"
       kindergarten_graduation_correlation(district[:for])
     else
-      @dr.district_objects.each do |district_object|
-        aggregated << kindergarten_graduation_correlation(district_object.name)
+      aggregated = @dr.district_objects.map do |district_object|
+        kindergarten_graduation_correlation(district_object.name)
       end
       aggregated.count(true)/aggregated.length > 0.7 ? true : false
     end
