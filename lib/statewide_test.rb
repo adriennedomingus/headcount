@@ -21,7 +21,7 @@ class StatewideTest
     end
     if grade == 3
       data[:third_grade]
-    else grade == 8
+    elsif grade == 8
       data[:eighth_grade]
     end
   end
@@ -31,25 +31,20 @@ class StatewideTest
       raise UnknownDataError
     end
     result = {}
-    reading_data = data[:reading]
-    writing_data = data[:writing]
     math_data = data[:math]
     math_data.each do |year, data|
       result[year] = {:math => math_data[year][race]}
     end
-    #can we also pull lines 41 and 44 into method starting on line 50?
-    reading_data.each do |year, data|
-      add_data_by_race(reading_data, result, :reading, year, race)
-    end
-    writing_data.each do |year, data|
-      add_data_by_race(writing_data, result, :writing, year, race)
-    end
+    add_data_by_race(data[:reading], result, :reading, race)
+    add_data_by_race(data[:writing], result, :writing, race)
     result
   end
 
-  def add_data_by_race(data, result, subject, year, race)
-    data.each do
-      result[year][subject] = data[year][race]
+  def add_data_by_race(dataset, result, subject, race)
+    dataset.each do |year, data|
+      data.each do
+        result[year][subject] = dataset[year][race]
+      end
     end
   end
 
