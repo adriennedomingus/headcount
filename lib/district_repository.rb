@@ -2,6 +2,7 @@ require 'csv'
 require_relative 'district'
 require_relative 'enrollment_repository'
 require_relative 'statewide_test_repository'
+require_relative 'economic_profile_repository'
 
 class DistrictRepository
 
@@ -41,6 +42,14 @@ class DistrictRepository
         end
       end
       @district.statewide_test = StatewideTest.new(@statewide_object.data)
+    end
+    if @epr
+      @epr.economic_profile_objects.each do |economic_profile_object|
+        if economic_profile_object.data[:name] == @district.name
+          @economic_profile_object = economic_profile_object
+        end
+      end
+      @district.economic_profile = EconomicProfile.new(@economic_profile_object.data)
     end
     hs_graduation_data = Hash.new
     hs_graduation_matches.each do |hash|
@@ -89,6 +98,10 @@ class DistrictRepository
     if hash[:statewide_testing]
       @str = StatewideTestRepository.new
       @str.load_data({:statewide_testing => hash[:statewide_testing]})
+    end
+    if hash[:economic_profile]
+      @epr = EconomicProfileRepository.new
+      @epr.load_data({:statewide_testing => hash[:economic_profile]})
     end
     upcase_names_in_enrollment_repository
     @district_objects
