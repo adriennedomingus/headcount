@@ -26,16 +26,21 @@ class EconomicProfileRepository
     read_file(hash)
     @mhi_contents.each do |row|
       if economic_profile_objects.empty?
-        economic_profile_objects << EconomicProfile.new({:name => row[:location],
+        economic_profile_objects << EconomicProfile.new({:name => row[:location].upcase,
         :median_household_income => {},
         :children_in_poverty => {},
-        :free_or_reduced_price_lunch => {:percentage => {}, :total => {}},
+        :free_or_reduced_price_lunch => {},
         :title_i => {}})
+        economic_profile_objects.each do |economic_profile_object|
+          if row[:location].upcase == economic_profile_object.name.upcase
+            economic_profile_object.data[:median_household_income][row[:timeframe].split("-").map! { |year| year.to_i}] = row[:data].to_i
+          end
+        end
       else
         @mhi_contents.each do |row|
-          if economic_profile_objects.any? { |economic_profile_object| economic_profile_object.name == row[:location] }
+          if economic_profile_objects.any? { |economic_profile_object| economic_profile_object.name.upcase == row[:location].upcase }
             economic_profile_objects.each do |economic_profile_object|
-              if row[:location] == economic_profile_object.name
+              if row[:location].upcase == economic_profile_object.name.upcase
                 economic_profile_object.data[:median_household_income][row[:timeframe].split("-").map! { |year| year.to_i}] = row[:data].to_i
               end
             end
@@ -46,7 +51,7 @@ class EconomicProfileRepository
             :free_or_reduced_price_lunch => {},
             :title_i => {}})
             economic_profile_objects.each do |economic_profile_object|
-              if row[:location] == economic_profile_object.name
+              if row[:location].upcase == economic_profile_object.name.upcase
                 economic_profile_object.data[:median_household_income][row[:timeframe].split("-").map! { |year| year.to_i}] = row[:data].to_i
               end
             end
@@ -54,14 +59,14 @@ class EconomicProfileRepository
         end
         @cip_contents.each do |row|
           economic_profile_objects.each do |economic_profile_object|
-            if row[:location] == economic_profile_object.name
+            if row[:location].upcase == economic_profile_object.name.upcase
               economic_profile_object.data[:children_in_poverty][row[:timeframe].to_i] = row[:data].to_f
             end
           end
         end
         @frl_contents.each do |row|
           economic_profile_objects.each do |economic_profile_object|
-            if row[:location] == economic_profile_object.name
+            if row[:location].upcase == economic_profile_object.name.upcase
               if economic_profile_object.data[:free_or_reduced_price_lunch][row[:timeframe].to_i]
                 if row[:poverty_level] == "Eligible for Free or Reduced Lunch"
                   if row[:dataformat] == "Percent"
@@ -84,7 +89,7 @@ class EconomicProfileRepository
         end
         @ti_contents.each do |row|
           economic_profile_objects.each do |economic_profile_object|
-            if row[:location] == economic_profile_object.name
+            if row[:location].upcase == economic_profile_object.name.upcase
               economic_profile_object.data[:title_i][row[:timeframe].to_i] = row[:data].to_f
             end
           end

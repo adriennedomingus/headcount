@@ -6,7 +6,8 @@ class HeadcountAnalyst
 
   def initialize(district_respository)
     @dr = district_respository
-    @dr.load_data({:enrollment => {:kindergarten => "./data/Kindergartners in full-day program.csv", :high_school_graduation => "./data/High school graduation rates.csv"}})
+    @dr.load_data({:enrollment => {:kindergarten => "./data/Kindergartners in full-day program.csv",
+                   :high_school_graduation => "./data/High school graduation rates.csv"}})
   end
 
   def kindergarten_participation_rate_variation(district1_name, district2_name)
@@ -15,29 +16,37 @@ class HeadcountAnalyst
     district1_average = calculate_kindergarten_average(@district1)
     district2_average = calculate_kindergarten_average(@district2)
     variation = district1_average / district2_average
-    truncate_value(variation)
+    variation
   end
+
+  # def calculate_kindergarten_average(district)
+  #   total = district.enrollment.data[:kindergarten_participation].values.reduce do |sum, participation|
+  #      sum + truncate_value(participation)
+  #   end
+  #   average = truncate_value(total)/district.enrollment.data[:kindergarten_participation].length
+  #   truncate_value(average)
+  # end
 
   def calculate_kindergarten_average(district)
     total = district.enrollment.data[:kindergarten_participation].values.reduce do |sum, participation|
-       sum + truncate_value(participation)
+       sum + participation
     end
-    average = truncate_value(total)/district.enrollment.data[:kindergarten_participation].length
-    truncate_value(average)
+    average = total/district.enrollment.data[:kindergarten_participation].length
+    average
   end
 
   def graduation_variation(district_name)
     district = dr.find_by_name(district_name)
     state = dr.find_by_name("COLORADO")
-    truncate_value(calculate_graduation_average(district) / calculate_graduation_average(state))
+    calculate_graduation_average(district) / calculate_graduation_average(state)
   end
 
   def calculate_graduation_average(district)
     total = district.enrollment.data[:high_school_graduation].values.reduce do |sum, participation|
-       sum + truncate_value(participation)
+       sum + participation
     end
-    average = truncate_value(total)/district.enrollment.data[:high_school_graduation].length
-    truncate_value(average)
+    average = total/(district.enrollment.data[:high_school_graduation].length)
+    average
   end
 
   def kindergarten_variation(district)
@@ -49,16 +58,16 @@ class HeadcountAnalyst
     district1_participation = @dr.find_by_name(district1).enrollment.data[:kindergarten_participation]
     district2_participation = @dr.find_by_name(district2[:against]).enrollment.data[:kindergarten_participation]
     district1_participation.each do |key, value|
-      d1_truncated_value = truncate_value(value)
-      d2_truncated_value = truncate_value(district2_participation[key])
-      result[key] = truncate_value(d1_truncated_value/d2_truncated_value)
+      d1_truncated_value = value
+      d2_truncated_value = district2_participation[key]
+      result[key] = d1_truncated_value/d2_truncated_value
     end
     result
   end
 
   def kindergarten_participation_against_high_school_graduation(district_name)
     result = kindergarten_variation(district_name) / graduation_variation(district_name)
-    truncate_value(result)
+    result
   end
 
   def kindergarten_participation_correlates_with_high_school_graduation(district)
@@ -84,5 +93,16 @@ class HeadcountAnalyst
 
   def truncate_value(value)
     (sprintf "%.3f", value).to_f
+  end
+
+  def high_poverty_and_high_school_graduation
+    rs = ResultSet.new
+    rs.matching_districts = []
+    rs.statewide_average = ResultEntry.new({:free_and_reduced_price_lunch_rate => "we don't know this yet",
+                                            :children_in_poverty_rate => "also don't know",
+                                            :high_school_graduation_rate => "find me"})
+    #some if loop to find matching districts
+      #rs.matching_districts << if it matches
+    #end
   end
 end

@@ -47,7 +47,6 @@ class HeadcountAnalystTest < MiniTest::Test
     assert_equal 1.185, ha.graduation_variation("BOULDER VALLEY RE 2")
   end
 
-
   def test_kindergarten_variation_relative_to_colorado
     ha = HeadcountAnalyst.new(DistrictRepository.new)
 
