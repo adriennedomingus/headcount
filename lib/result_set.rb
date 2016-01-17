@@ -2,10 +2,10 @@ require_relative 'result_entry'
 
 class ResultSet
 
-  attr_reader :matching_districts, :statewide_average
+  attr_reader :matching_districts
+  attr_accessor :statewide_average
 
   def initialize(hash)
-    @matching_districts = hash[:matching_districts]
-    @statewide_average = hash[:statewide_average]
+    @matching_districts = []
   end
 end

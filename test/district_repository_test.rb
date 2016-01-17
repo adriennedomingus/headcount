@@ -36,29 +36,29 @@ class DistrictRepositoryTest < MiniTest::Test
     assert_equal "ADAMS-ARAPAHOE 28J", @dr.find_by_name("ADAMS-ARAPAHOE 28J").name
   end
 
-  # def test_find_by_name_is_not_case_insensitive
-  #   assert_equal "ADAMS-ARAPAHOE 28J", @dr.find_by_name("Adams-Arapahoe 28J").name
-  # end
-  #
-  # def test_find_all_matching
-  #   assert_equal 2, @dr.find_all_matching("Adams").count
-  # end
-  #
-  # def test_starting_relationships_layer
-  #   district = @dr.find_by_name("ACADEMY 20")
-  #
-  #   assert_equal 0.43628, district.enrollment.kindergarten_participation_in_year(2010)
-  # end
-  #
-  # def test_relationship_with_statwide_testing_data
-  #   district = @dr.find_by_name("ACADEMY 20")
-  #   result = {2008=>{:math=>0.857, :reading=>0.866, :writing=>0.671}, 2009=>{:math=>0.824, :reading=>0.862, :writing=>0.706}, 2010=>{:math=>0.849, :reading=>0.864, :writing=>0.662}, 2011=>{:math=>0.819, :reading=>0.867, :writing=>0.678}, 2012=>{:reading=>0.87, :math=>0.83, :writing=>0.65517}, 2013=>{:math=>0.8554, :reading=>0.85923, :writing=>0.6687}, 2014=>{:math=>0.8345, :reading=>0.83101, :writing=>0.63942}}
-  #   assert_equal result, district.statewide_test.proficient_by_grade(3)
-  # end
-  #
-  # def test_relationship_with_economic_profile_data
-  #   district = @dr.find_by_name("ACADEMY 20")
-  #
-  #   assert_equal 0.01246, district.economic_profile.title_i_in_year(2013)
-  # end
+  def test_find_by_name_is_not_case_insensitive
+    assert_equal "ADAMS-ARAPAHOE 28J", @dr.find_by_name("Adams-Arapahoe 28J").name
+  end
+
+  def test_find_all_matching
+    assert_equal 2, @dr.find_all_matching("Adams").count
+  end
+
+  def test_starting_relationships_layer
+    district = @dr.find_by_name("ACADEMY 20")
+
+    assert_equal 0.43628, district.enrollment.kindergarten_participation_in_year(2010)
+  end
+
+  def test_relationship_with_statwide_testing_data
+    district = @dr.find_by_name("ACADEMY 20")
+    result = {2008=>{:math=>0.857, :reading=>0.866, :writing=>0.671}, 2009=>{:math=>0.824, :reading=>0.862, :writing=>0.706}, 2010=>{:math=>0.849, :reading=>0.864, :writing=>0.662}, 2011=>{:math=>0.819, :reading=>0.867, :writing=>0.678}, 2012=>{:reading=>0.87, :math=>0.83, :writing=>0.65517}, 2013=>{:math=>0.8554, :reading=>0.85923, :writing=>0.6687}, 2014=>{:math=>0.8345, :reading=>0.83101, :writing=>0.63942}}
+    assert_equal result, district.statewide_test.proficient_by_grade(3)
+  end
+
+  def test_relationship_with_economic_profile_data
+    district = @dr.find_by_name("ACADEMY 20")
+
+    assert_equal 0.01246, district.economic_profile.title_i_in_year(2013)
+  end
 end

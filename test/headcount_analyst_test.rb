@@ -86,4 +86,46 @@ class HeadcountAnalystTest < MiniTest::Test
     refute @ha.kindergarten_participation_correlates_with_high_school_graduation(across: ["BENNETT 29J", "ACADEMY 20"])
     refute @ha.kindergarten_participation_correlates_with_high_school_graduation(across: ["BOULDER VALLEY RE 2", "ACADEMY 20", "BETHUNE R-5", "BUFFALO RE-4", "PLATEAU VALLEY 50"])
   end
+
+  def test_calculate_average_frl
+    district = @ha.dr.find_by_name("ACADEMY 20")
+
+    assert_equal 0.571, @ha.calculate_average_frl_number(district)
+  end
+
+  def test_calculate_average_percent_of_children_in_poverty
+    #FAIL DUE TO TRUNCATION
+    district = @ha.dr.find_by_name("ACADEMY 20")
+
+    assert_equal 0.041, @ha.calculate_avarage_percent_of_children_in_poverty(district)
+  end
+
+  def test_calculates_average_of_median_household_incomes
+    district = @ha.dr.find_by_name("ACADEMY 20")
+    state = @ha.dr.find_by_name("COLORADO")
+
+    assert_equal 57408.0, @ha.calculate_average_of_median_household_income(state)
+    assert_equal 87635.4, @ha.calculate_average_of_median_household_income(district)
+  end
+
+  def test_calculates_median_household_income_variation
+    assert_equal 1.526536371237458, @ha.median_household_income_variation("ACADEMY 20")
+  end
+
+  def test_kindergarten_participation_against_household_income
+    assert_equal 0.5030997062830774, @ha.kindergarten_participation_against_household_income("ACADEMY 20")
+  end
+
+  def test_kindergarten_and_income_correlation_returns_true_or_false
+    refute @ha.true_or_false_kindergarten_correlates_with_income("ACADEMY 20")
+  end
+
+  def test_whether_kindergarten_participation_correlates_with_income
+    refute @ha.kindergarten_participation_correlates_with_household_income(for: "ACADEMY 20")
+    refute @ha.kindergarten_participation_correlates_with_household_income(for: "BENNETT 29J")
+  end
+
+  def test_kindergarten_correlation_with_income_across_specified_districts
+    refute @ha.kindergarten_participation_correlates_with_household_income(across: ["BOULDER VALLEY RE 2", "ACADEMY 20"])
+  end
 end
