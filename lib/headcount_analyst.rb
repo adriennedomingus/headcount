@@ -113,8 +113,8 @@ class HeadcountAnalyst
 
   def high_poverty_and_high_school_graduation
     state = @dr.find_by_name("COLORADO")
-    rs = ResultSet.new
-    rs.statewide_average = ResultEntry.new({:free_and_reduced_price_lunch_rate => calculate_average_frl_number(state),
+    rs = ResultSet.new(:matching_districts => [], :statewide_average => [])
+    rs.statewide_average << ResultEntry.new({:free_and_reduced_price_lunch_rate => calculate_average_frl_number(state),
                                             #:children_in_poverty_rate => calculate_avarage_percent_of_children_in_poverty(state),
                                             :high_school_graduation_rate => calculate_graduation_average(state)})
     @dr.district_objects.each do |district_object|
@@ -129,8 +129,8 @@ class HeadcountAnalyst
 
   def high_income_disparity
     state = @dr.find_by_name("COLORADO")
-    rs = ResultSet.new
-    rs.statewide_average = ResultEntry.new({:median_household_income => calculate_average_of_median_household_income(state),
+    rs = ResultSet.new(:matching_districts => [], :statewide_average => [])
+    rs.statewide_average << ResultEntry.new({:median_household_income => calculate_average_of_median_household_income(state),
                                             #:children_in_poverty_rate => calculate_avarage_percent_of_children_in_poverty(state)
                                             })
     @dr.district_objects.each do |district_object|
@@ -140,7 +140,8 @@ class HeadcountAnalyst
                                                 })
       end
     end
-
+    require "pry"
+    binding.pry
     rs
   end
 
