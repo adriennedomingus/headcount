@@ -30,12 +30,12 @@ class DistrictRepositoryTest < MiniTest::Test
    }
 })
   end
-  #
-  # def test_find_by_name_method_returns_instantiated_object_name
-  #
-  #   assert_equal "ADAMS-ARAPAHOE 28J", @dr.find_by_name("ADAMS-ARAPAHOE 28J").name
-  # end
-  #
+
+  def test_find_by_name_method_returns_instantiated_object_name
+
+    assert_equal "ADAMS-ARAPAHOE 28J", @dr.find_by_name("ADAMS-ARAPAHOE 28J").name
+  end
+
   # def test_find_by_name_is_not_case_insensitive
   #   assert_equal "ADAMS-ARAPAHOE 28J", @dr.find_by_name("Adams-Arapahoe 28J").name
   # end

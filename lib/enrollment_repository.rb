@@ -64,10 +64,8 @@ class EnrollmentRepository
   end
 
   def find_by_name(name)
-    @enrollment_objects.select do |enrollment_object|
-      if enrollment_object.data[:name] == name.upcase
-        return enrollment_object
-      end
+    @enrollment_objects.find do |enrollment_object|
+      enrollment_object.data[:name] == name.upcase
     end
   end
 end

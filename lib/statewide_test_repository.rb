@@ -30,27 +30,27 @@ class StatewideTestRepository
       if statewide_objects.empty?
         create_new_statewide_object_hash(row)
       else
-        @third_grade_contents.each do |row|
+        # @third_grade_contents.each do |row|
           if statewide_objects.any? { |statewide_object| statewide_object.name == row[:location] }
             add_data_to_existing_statewide_object(row, :third_grade, :score)
           else #only do this if NONE of them match the name
             create_new_statewide_object_hash(row)
             add_data_to_existing_statewide_object(row, :third_grade, :score)
           end
-        end
-        @eighth_grade_contents.each do |row|
-          add_data_to_existing_statewide_object(row, :eighth_grade, :score)
-        end
-        @math_contents.each do |row|
-          add_data_to_existing_statewide_object(row, :math, :race_ethnicity)
-        end
-        @reading_contents.each do |row|
-          add_data_to_existing_statewide_object(row, :reading, :race_ethnicity)
-        end
-        @writing_contents.each do |row|
-          add_data_to_existing_statewide_object(row, :writing, :race_ethnicity)
-        end
+        # end
       end
+    end
+    @eighth_grade_contents.each do |row|
+      add_data_to_existing_statewide_object(row, :eighth_grade, :score)
+    end
+    @math_contents.each do |row|
+      add_data_to_existing_statewide_object(row, :math, :race_ethnicity)
+    end
+    @reading_contents.each do |row|
+      add_data_to_existing_statewide_object(row, :reading, :race_ethnicity)
+    end
+    @writing_contents.each do |row|
+      add_data_to_existing_statewide_object(row, :writing, :race_ethnicity)
     end
   end
 
@@ -84,10 +84,8 @@ class StatewideTestRepository
   end
 
   def find_by_name(name)
-    statewide_objects.select do |statewide|
-      if name.upcase == statewide.data[:name].upcase
-        return statewide
-      end
+    statewide_objects.find do |statewide|
+      name.upcase == statewide.data[:name].upcase
     end
   end
 end

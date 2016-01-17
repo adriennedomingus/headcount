@@ -24,7 +24,7 @@ class DistrictRepository
       @str = StatewideTestRepository.new
       @str.load_data(:statewide_testing => hash[:statewide_testing])
       district_objects.each do |district_object|
-        @str.statewide_objects.each do |statewide_object|
+        @str.statewide_objects.find do |statewide_object|
           if statewide_object.data[:name].upcase == district_object.name
             district_object.statewide_test = StatewideTest.new(statewide_object.data)
           end
@@ -58,45 +58,18 @@ class DistrictRepository
   end
 
   def find_by_name(name)
-    district_objects.select do |district_object|
-      if district_object.enrollment.data[:name].upcase == name.upcase
-        return district_object
-      end
+    district_objects.find do |district_object|
+      district_object.enrollment.data[:name].upcase == name.upcase
     end
   end
 
   def find_all_matching(name_fragment)
-    matches = []
     district_objects.select do |district_object|
-      if district_object.enrollment.data[:name].upcase.include?(name_fragment.upcase)
-        matches << district_object
-      end
+      district_object.enrollment.data[:name].upcase.include?(name_fragment.upcase)
     end
-    matches
   end
 
   def read_file(hash)
     @contents = CSV.open "./data/Kindergartners in full-day program.csv", headers: true, header_converters: :symbol
   end
 end
-
-
-# dr.load_data({
-#   :enrollment => {
-#     :kindergarten => "./data/Kindergartners in full-day program.csv",
-#     :high_school_graduation => "./data/High school graduation rates.csv",
-#   },
-#   :statewide_testing => {
-#     :third_grade => "./data/3rd grade students scoring proficient or above on the CSAP_TCAP.csv",
-#     :eighth_grade => "./data/8th grade students scoring proficient or above on the CSAP_TCAP.csv",
-#     :math => "./data/Average proficiency on the CSAP_TCAP by race_ethnicity_ Math.csv",
-#     :reading => "./data/Average proficiency on the CSAP_TCAP by race_ethnicity_ Reading.csv",
-#     :writing => "./data/Average proficiency on the CSAP_TCAP by race_ethnicity_ Writing.csv"
-#   }
-#   :economic_profile => {
-#   :median_household_income => "./data/Median household income.csv",
-#   :children_in_poverty => "./data/School-aged children in poverty.csv",
-#   :free_or_reduced_price_lunch => "./data/Students qualifying for free or reduced price lunch.csv",
-#   :title_i => "./data/Title I students.csv"}
-#   }
-# })
