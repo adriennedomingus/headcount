@@ -24,7 +24,7 @@ class DistrictRepository
       @str = StatewideTestRepository.new
       @str.load_data(:statewide_testing => hash[:statewide_testing])
       district_objects.each do |district_object|
-        @str.statewide_objects.find do |statewide_object|
+        @str.statewide_objects.each do |statewide_object|
           if statewide_object.data[:name].upcase == district_object.name
             district_object.statewide_test = StatewideTest.new(statewide_object.data)
           end

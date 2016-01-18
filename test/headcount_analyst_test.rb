@@ -131,7 +131,7 @@ class HeadcountAnalystTest < MiniTest::Test
   # end
 
   def test_kindergarten_correlation_with_income_statewide
-    @ha.kindergarten_participation_correlates_with_household_income
+    refute @ha.kindergarten_participation_correlates_with_household_income(for: "STATEWIDE")
   end
 
   # def test_high_poverty_and_high_school_graduation

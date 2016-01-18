@@ -140,8 +140,6 @@ class HeadcountAnalyst
                                                 })
       end
     end
-    require "pry"
-    binding.pry
     rs
   end
 
