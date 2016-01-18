@@ -7,8 +7,8 @@ require_relative 'data_utilities'
 class DistrictRepository
   attr_reader :district_objects, :name, :er, :epr, :str
 
-  def initialize
-    @district_objects = []
+  def initialize(district_objects = [])
+    @district_objects = district_objects
   end
 
   def load_data(hash)

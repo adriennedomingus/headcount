@@ -138,35 +138,17 @@ class DataUtilities
       match.data[:median_household_income][row[:timeframe].split("-").map! { |year| year.to_i}] = row[:data].to_i
     end
     @cip_contents.each do |row|
-      economic_profile_objects.each do |economic_profile_object|
-        if row[:location].upcase == economic_profile_object.name.upcase
-          if row[:dataformat] == "Percent"
-            economic_profile_object.data[:children_in_poverty][row[:timeframe].to_i] = row[:data].to_f
-          end
-        end
-      end
+      next unless row[:dataformat] == "Percent"
+      matching_epo = economic_profile_objects.find { |economic_profile_object| row[:location].upcase == economic_profile_object.name.upcase }
+      matching_epo.data[:children_in_poverty][row[:timeframe].to_i] = row[:data].to_f
     end
     @frl_contents.each do |row|
-      economic_profile_objects.each do |economic_profile_object|
-        if row[:location].upcase == economic_profile_object.name.upcase
-          if economic_profile_object.data[:free_or_reduced_price_lunch][row[:timeframe].to_i]
-            if row[:poverty_level] == "Eligible for Free or Reduced Lunch"
-              if row[:dataformat] == "Percent"
-                economic_profile_object.data[:free_or_reduced_price_lunch][row[:timeframe].to_i][:percentage] = row[:data].to_f
-              elsif row[:dataformat] == "Number"
-                economic_profile_object.data[:free_or_reduced_price_lunch][row[:timeframe].to_i][:total] = row[:data].to_i
-              end
-            end
-          else
-            if row[:poverty_level] == "Eligible for Free or Reduced Lunch"
-              if row[:dataformat] == "Percent"
-                economic_profile_object.data[:free_or_reduced_price_lunch][row[:timeframe].to_i] = {:percentage => row[:data].to_f}
-              elsif row[:dataformat] == "Number"
-                economic_profile_object.data[:free_or_reduced_price_lunch][row[:timeframe].to_i] = {:total => row[:data].to_i}
-              end
-            end
-          end
-        end
+      next unless row[:poverty_level] == "Eligible for Free or Reduced Lunch"
+      matching_epo = economic_profile_objects.find { |economic_profile_object| row[:location].upcase == economic_profile_object.name.upcase }
+      if row[:dataformat] == "Percent"
+        matching_epo.set_free_or_reduced_price_lunch_percentage(row[:timeframe].to_i, row[:data].to_f)
+      elsif row[:dataformat] == "Number"
+        matching_epo.set_free_or_reduced_price_lunch_total(row[:timeframe].to_i, row[:data].to_i)
       end
     end
     @ti_contents.each do |row|

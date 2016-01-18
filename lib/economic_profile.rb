@@ -68,4 +68,14 @@ class EconomicProfile
       raise UnknownDataError
     end
   end
+
+  def set_free_or_reduced_price_lunch_percentage(year, number)
+    data[:free_or_reduced_price_lunch][year] ||= {}
+    data[:free_or_reduced_price_lunch][year][:percentage] = number
+  end
+
+  def set_free_or_reduced_price_lunch_total(year, number)
+    data[:free_or_reduced_price_lunch][year] ||= {}
+    data[:free_or_reduced_price_lunch][year][:total] = number
+  end
 end
