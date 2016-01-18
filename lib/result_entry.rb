@@ -5,10 +5,12 @@ class ResultEntry
   attr_reader :free_and_reduced_price_lunch_rate,
               :children_in_poverty_rate,
               :high_school_graduation_rate,
-              :median_household_income,
-              :name
+              :median_household_income
+
+  attr_accessor :name
 
   def initialize(hash)
+    @name = hash[:name]
     @free_and_reduced_price_lunch_rate = hash[:free_and_reduced_price_lunch_rate]
     @children_in_poverty_rate = hash[:children_in_poverty_rate]
     @high_school_graduation_rate = hash[:high_school_graduation_rate]

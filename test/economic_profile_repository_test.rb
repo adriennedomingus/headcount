@@ -15,10 +15,26 @@ class EconomicProfileRepositoryTest < Minitest::Test
   end
 
   def test_it_loads_data
-    result = {:name=>"ADAMS-ARAPAHOE 28J",
-              :median_household_income=>{[2005, 2009]=>43893, [2006, 2010]=>44007, [2008, 2012]=>45438, [2007, 2011]=>44687, [2009, 2013]=>45507},
-              :children_in_poverty=>{1995=>0.119, 1997=>0.143, 1999=>0.151, 2000=>0.146, 2001=>0.141, 2002=>0.161, 2003=>0.18, 2004=>0.182, 2005=>0.181, 2006=>0.208, 2007=>0.238, 2008=>0.18582, 2009=>0.234, 2010=>0.23357, 2011=>0.26, 2012=>0.268, 2013=>0.267},
-              :free_or_reduced_price_lunch=>{2014=>{:total=>28969, :percentage=>0.69422}, 2012=>{:percentage=>0.67797, :total=>27007}, 2011=>{:total=>25808, :percentage=>0.6501}, 2010=>{:percentage=>0.635, :total=>24513}, 2009=>{:total=>22677, :percentage=>0.6134}, 2013=>{:percentage=>0.67657, :total=>27656}, 2008=>{:total=>21167, :percentage=>0.5959}, 2007=>{:percentage=>0.56, :total=>18792}, 2006=>{:total=>18247, :percentage=>0.5394}, 2005=>{:percentage=>0.4935, :total=>16434}, 2004=>{:total=>15563, :percentage=>0.4826}, 2003=>{:percentage=>0.42, :total=>13715}, 2002=>{:total=>13599, :percentage=>0.42164}, 2001=>{:percentage=>0.35603, :total=>11225}, 2000=>{:total=>10987, :percentage=>0.36}}, :title_i=>{2009=>0.315, 2011=>0.352, 2012=>0.3576, 2013=>0.35509, 2014=>0.35278}}
+    result = {:name=>"ARCHULETA COUNTY 50 JT",
+              :median_household_income=>{[2005, 2009]=>57732, [2006, 2010]=>57633, [2008, 2012]=>54301, [2007, 2011]=>61028, [2009, 2013]=>48818},
+              :children_in_poverty=>{1995=>0.146, 1997=>0.198, 1999=>0.169, 2000=>0.195, 2001=>0.179, 2002=>0.186, 2003=>0.162, 2004=>0.148, 2005=>0.181, 2006=>0.176, 2007=>0.166, 2008=>0.18711, 2009=>0.227, 2010=>0.21653, 2011=>0.241, 2012=>0.244, 2013=>0.239},
+              :free_or_reduced_price_lunch=>
+                {2000=>{:percentage=>0.36, :total=>554},
+                2001=>{:total=>514, :percentage=>0.32843},
+                2002=>{:percentage=>0.33123, :total=>526},
+                2003=>{:total=>606, :percentage=>0.39},
+                2004=>{:percentage=>0.3982, :total=>628},
+                2005=>{:total=>607, :percentage=>0.3592},
+                2006=>{:percentage=>0.4162, :total=>703},
+                2007=>{:total=>677, :percentage=>0.44},
+                2008=>{:percentage=>0.4616, :total=>704},
+                2013=>{:total=>663, :percentage=>0.50113},
+                2009=>{:percentage=>0.5063, :total=>768},
+                2010=>{:total=>764, :percentage=>0.512},
+                2011=>{:percentage=>0.5181, :total=>728},
+                2012=>{:total=>733, :percentage=>0.53465},
+                2014=>{:percentage=>0.52413, :total=>695}},
+                :title_i=>{2009=>0.504, 2011=>0.671, 2012=>0.69292, 2013=>0.7037, 2014=>0.71493}}
 
     assert_equal result, @epr.economic_profile_objects[3].data
   end
@@ -26,8 +42,23 @@ class EconomicProfileRepositoryTest < Minitest::Test
   def test_it_can_find_by_name
     result = {:name=>"ACADEMY 20",
               :median_household_income=>{[2005, 2009]=>85060, [2006, 2010]=>85450, [2008, 2012]=>89615, [2007, 2011]=>88099, [2009, 2013]=>89953},
-              :children_in_poverty=>{1995=>0.032, 1997=>0.035, 1999=>0.032, 2000=>0.031, 2001=>0.029, 2002=>0.033, 2003=>0.037, 2004=>0.034, 2005=>0.042, 2006=>0.036, 2007=>0.039, 2008=>855.0, 2009=>0.047, 2010=>0.05754, 2011=>0.059, 2012=>0.064, 2013=>0.048},
-              :free_or_reduced_price_lunch=>{2014=>{:total=>3132, :percentage=>0.12743}, 2012=>{:percentage=>0.12539, :total=>3006}, 2011=>{:total=>2834, :percentage=>0.1198}, 2010=>{:percentage=>0.113, :total=>2601}, 2009=>{:total=>2338, :percentage=>0.1034}, 2013=>{:percentage=>0.13173, :total=>3225}, 2008=>{:total=>2058, :percentage=>0.0939}, 2007=>{:percentage=>0.08, :total=>1630}, 2006=>{:total=>1534, :percentage=>0.0723}, 2005=>{:percentage=>0.0587, :total=>1204}, 2004=>{:total=>1182, :percentage=>0.0596}, 2003=>{:percentage=>0.06, :total=>1062}, 2002=>{:total=>905, :percentage=>0.0484}, 2001=>{:percentage=>0.04714, :total=>855}, 2000=>{:total=>701, :percentage=>0.04}}, :title_i=>{2009=>0.014, 2011=>0.011, 2012=>0.01072, 2013=>0.01246, 2014=>0.0273}}
+              :children_in_poverty=>{1995=>0.032, 1997=>0.035, 1999=>0.032, 2000=>0.031, 2001=>0.029, 2002=>0.033, 2003=>0.037, 2004=>0.034, 2005=>0.042, 2006=>0.036, 2007=>0.039, 2008=>0.04404, 2009=>0.047, 2010=>0.05754, 2011=>0.059, 2012=>0.064, 2013=>0.048},
+              :free_or_reduced_price_lunch=>{2014=>{:total=>3132, :percentage=>0.12743},
+                2012=>{:percentage=>0.12539, :total=>3006},
+                2011=>{:total=>2834, :percentage=>0.1198},
+                2010=>{:percentage=>0.113, :total=>2601},
+                2009=>{:total=>2338, :percentage=>0.1034},
+                2013=>{:percentage=>0.13173, :total=>3225},
+                2008=>{:total=>2058, :percentage=>0.0939},
+                2007=>{:percentage=>0.08, :total=>1630},
+                2006=>{:total=>1534, :percentage=>0.0723},
+                2005=>{:percentage=>0.0587, :total=>1204},
+                2004=>{:total=>1182, :percentage=>0.0596},
+                2003=>{:percentage=>0.06, :total=>1062},
+                2002=>{:total=>905, :percentage=>0.0484},
+                2001=>{:percentage=>0.04714, :total=>855},
+                2000=>{:total=>701, :percentage=>0.04}},
+              :title_i=>{2009=>0.014, 2011=>0.011, 2012=>0.01072, 2013=>0.01246, 2014=>0.0273}}
 
     assert_equal result, @epr.find_by_name("ACADEMY 20").data
   end

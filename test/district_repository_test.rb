@@ -5,7 +5,7 @@ require_relative '../lib/district_repository'
 class DistrictRepositoryTest < MiniTest::Test
 
   def test_loads_data
-    assert_equal "ADAMS COUNTY 14", @dr.district_objects[2].name
+    assert_equal "ADAMS-ARAPAHOE 28J", @dr.district_objects[2].name
   end
 
   def setup
@@ -52,7 +52,13 @@ class DistrictRepositoryTest < MiniTest::Test
 
   def test_relationship_with_statwide_testing_data
     district = @dr.find_by_name("ACADEMY 20")
-    result = {2008=>{:math=>0.857, :reading=>0.866, :writing=>0.671}, 2009=>{:math=>0.824, :reading=>0.862, :writing=>0.706}, 2010=>{:math=>0.849, :reading=>0.864, :writing=>0.662}, 2011=>{:math=>0.819, :reading=>0.867, :writing=>0.678}, 2012=>{:reading=>0.87, :math=>0.83, :writing=>0.65517}, 2013=>{:math=>0.8554, :reading=>0.85923, :writing=>0.6687}, 2014=>{:math=>0.8345, :reading=>0.83101, :writing=>0.63942}}
+    result = {2008=>{:math=>0.857, :reading=>0.866, :writing=>0.671},
+             2009=>{:math=>0.824, :reading=>0.862, :writing=>0.706},
+             2010=>{:math=>0.849, :reading=>0.864, :writing=>0.662},
+             2011=>{:math=>0.819, :reading=>0.867, :writing=>0.678},
+             2012=>{:reading=>0.87, :math=>0.83, :writing=>0.65517},
+             2013=>{:math=>0.8554, :reading=>0.85923, :writing=>0.6687},
+             2014=>{:math=>0.8345, :reading=>0.83101, :writing=>0.63942}}
     assert_equal result, district.statewide_test.proficient_by_grade(3)
   end
 

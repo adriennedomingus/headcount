@@ -12,7 +12,7 @@ class EconomicProfile
   end
 
   def median_household_income_in_year(year)
-    years = (2005..2013).to_a
+    years = (2005..2015).to_a
     if !years.include?(year)
       raise UnknownDataError
     end

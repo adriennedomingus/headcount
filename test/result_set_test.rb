@@ -23,8 +23,8 @@ class ResultSetTest < MiniTest::Test
     assert_equal 0.6, rs.statewide_average.high_school_graduation_rate
   end
 
-  def test_can_be_initialized_without_hash
-    rs = ResultSet.new
-    assert_equal [], rs.matching_districts
-  end
+  # def test_can_be_initialized_without_hash
+  #   rs = ResultSet.new
+  #   assert_equal [], rs.matching_districts
+  # end
 end
