@@ -70,33 +70,33 @@ class DataUtilities
   end
 
   def self.match_enrollment_objects_to_district_object(district_objects)
-    district_objects.each do |district_object|
-      match = @er.enrollment_objects.find do |enrollment_object|
-        enrollment_object.data[:name].upcase == district_object.name
+    district_objects.each do |district|
+      match = @er.enrollment_objects.find do |enrollment|
+        enrollment.data[:name].upcase == district.name
       end
-      district_object.enrollment = Enrollment.new(match.data)
+      district.enrollment = Enrollment.new(match.data)
     end
   end
 
   def self.create_new_statewide_testing_objects(hash, district_objects)
     @str = StatewideTestRepository.new
     @str.load_data(:statewide_testing => hash[:statewide_testing])
-    district_objects.each do |district_object|
-      match = @str.statewide_objects.find do |statewide_object|
-        statewide_object.data[:name].upcase == district_object.name
+    district_objects.each do |district|
+      match = @str.statewide_objects.find do |statewide|
+        statewide.data[:name].upcase == district.name
       end
-      district_object.statewide_test = StatewideTest.new(match.data)
+      district.statewide_test = StatewideTest.new(match.data)
     end
   end
 
   def self.create_new_economic_profile_objects(hash, district_objects)
     @epr = EconomicProfileRepository.new
     @epr.load_data(:economic_profile => hash[:economic_profile])
-    district_objects.each do |district_object|
-      match = @epr.economic_profile_objects.find do |economic_profile_object|
-        economic_profile_object.data[:name].upcase == district_object.name.upcase
+    district_objects.each do |district|
+      match = @epr.economic_profile_objects.find do |economic_profile|
+        economic_profile.data[:name].upcase == district.name.upcase
       end
-      district_object.economic_profile = EconomicProfile.new(match.data)
+      district.economic_profile = EconomicProfile.new(match.data)
     end
   end
 
@@ -106,7 +106,7 @@ class DataUtilities
       if no_preexisting_object_by_current_name(statewide_objects, row)
         create_new_statewide_object_hash(statewide_objects, row)
       end
-      statewide_objects.find { |statewide_object| statewide_object.name == row[:location] }
+      statewide_objects.find { |statewide| statewide.name == row[:location] }
       add_data_to_existing_statewide_object(statewide_objects, row, :third_grade, :score)
     end
     @eighth_grade_contents.each do |row|
@@ -128,35 +128,53 @@ class DataUtilities
 
   def self.load_economic_data(hash, economic_profile_objects)
     read_economic_files(hash)
+    load_median_household_income_data(economic_profile_objects)
+    load_children_in_poverty_data(economic_profile_objects)
+    load_frl_data(economic_profile_objects)
+    load_title_i_data(economic_profile_objects)
+  end
+
+  def self.load_median_household_income_data(economic_profile_objects)
     @mhi_contents.each do |row|
       if no_preexisting_object_by_current_name(economic_profile_objects, row)
         create_new_economic_profile_object_hash(economic_profile_objects, row)
       end
-      match = economic_profile_objects.find do |economic_profile_object|
-        row[:location].upcase == economic_profile_object.name.upcase
+      match = economic_profile_objects.find do |economic_profile|
+        row[:location].upcase == economic_profile.name.upcase
       end
-      match.data[:median_household_income][row[:timeframe].split("-").map! { |year| year.to_i}] = row[:data].to_i
+      year = row[:timeframe].split("-").map! { |year| year.to_i}
+      match.data[:median_household_income][year] = row[:data].to_i
     end
+  end
+
+  def self.load_children_in_poverty_data(economic_profile_objects)
     @cip_contents.each do |row|
       next unless row[:dataformat] == "Percent"
-      matching_epo = economic_profile_objects.find { |economic_profile_object| row[:location].upcase == economic_profile_object.name.upcase }
+      matching_epo = economic_profile_objects.find { |economic_profile| row[:location].upcase == economic_profile.name.upcase }
       matching_epo.data[:children_in_poverty][row[:timeframe].to_i] = row[:data].to_f
     end
+  end
+
+  def self.load_frl_data(economic_profile_objects)
     @frl_contents.each do |row|
       next unless row[:poverty_level] == "Eligible for Free or Reduced Lunch"
-      matching_epo = economic_profile_objects.find { |economic_profile_object| row[:location].upcase == economic_profile_object.name.upcase }
+      matching_epo = economic_profile_objects.find do |economic_profile|
+        row[:location].upcase == economic_profile.name.upcase
+      end
       if row[:dataformat] == "Percent"
         matching_epo.set_free_or_reduced_price_lunch_percentage(row[:timeframe].to_i, row[:data].to_f)
       elsif row[:dataformat] == "Number"
         matching_epo.set_free_or_reduced_price_lunch_total(row[:timeframe].to_i, row[:data].to_i)
       end
     end
+  end
+
+  def self.load_title_i_data(economic_profile_objects)
     @ti_contents.each do |row|
-      economic_profile_objects.each do |economic_profile_object|
-        if row[:location].upcase == economic_profile_object.name.upcase
-          economic_profile_object.data[:title_i][row[:timeframe].to_i] = row[:data].to_f
-        end
+      match = economic_profile_objects.find do |economic_profile|
+        row[:location].upcase == economic_profile.name.upcase
       end
+      match.data[:title_i][row[:timeframe].to_i] = row[:data].to_f
     end
   end
 
@@ -176,28 +194,22 @@ class DataUtilities
   end
 
   def self.match_enrollment_data_to_district_data(enrollment_objects, success, row)
-    enrollment_objects.each do |enrollment_object|
-      if row[:location].upcase == enrollment_object.name.upcase
-        enrollment_object.data[success][row[:timeframe].to_i] = row[:data].to_f
+    enrollment_objects.each do |enrollment|
+      if row[:location].upcase == enrollment.name.upcase
+        enrollment.data[success][row[:timeframe].to_i] = row[:data].to_f
       end
     end
   end
 
   def self.add_data_to_existing_statewide_object(statewide_objects, row, data_type, delimeter)
-    statewide_objects.each do |statewide_object|
-      if row[:location] == statewide_object.name
-        if statewide_object.data[data_type][row[:timeframe].to_i]
-          if row[:data] == "N/A"
-            statewide_object.data[data_type][row[:timeframe].to_i][row[delimeter].gsub(/\W/, "_").downcase.to_sym] = row[:data]
-          else
-            statewide_object.data[data_type][row[:timeframe].to_i][row[delimeter].gsub(/\W/, "_").downcase.to_sym] = row[:data].to_f
-          end
+    subject = row[delimeter].gsub(/\W/, "_").downcase.to_sym
+    statewide_objects.each do |statewide|
+      if row[:location] == statewide.name
+        statewide.data[data_type][row[:timeframe].to_i] ||= {}
+        if row[:data] == "N/A"
+          statewide.data[data_type][row[:timeframe].to_i][subject] = row[:data]
         else
-          if row[:data] == "N/A"
-            statewide_object.data[data_type][row[:timeframe].to_i] = {row[delimeter].gsub(/\W/, "_").downcase.to_sym => row[:data]}
-          else
-            statewide_object.data[data_type][row[:timeframe].to_i] = {row[delimeter].gsub(/\W/, "_").downcase.to_sym => row[:data].to_f}
-          end
+          statewide.data[data_type][row[:timeframe].to_i][subject] = row[:data].to_f
         end
       end
     end

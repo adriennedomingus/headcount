@@ -25,8 +25,8 @@ class HeadcountAnalyst
   def kindergarten_participation_rate_variation(district1_name, district2_name)
     @district1 = @dr.find_by_name(district1_name)
     @district2 = @dr.find_by_name(district2_name[:against])
-    district1_average = calculate_kindergarten_average(@district1)
-    district2_average = calculate_kindergarten_average(@district2)
+    district1_average = calculate_kindergarten_average(district1)
+    district2_average = calculate_kindergarten_average(district2)
     variation = district1_average / district2_average
     DataUtilities.truncate_value(variation)
   end
@@ -58,10 +58,10 @@ class HeadcountAnalyst
     kindergarten_participation_rate_variation(district, :against => "COLORADO")
   end
 
-  def kindergarten_participation_rate_variation_trend(district1, district2)
+  def kindergarten_participation_rate_variation_trend(district_1, district_2)
     result = Hash.new
-    district1_participation = @dr.find_by_name(district1).enrollment.data[:kindergarten_participation]
-    district2_participation = @dr.find_by_name(district2[:against]).enrollment.data[:kindergarten_participation]
+    district1_participation = @dr.find_by_name(district_1).enrollment.data[:kindergarten_participation]
+    district2_participation = @dr.find_by_name(district_2[:against]).enrollment.data[:kindergarten_participation]
     district1_participation.each do |key, value|
       d1_truncated_value = DataUtilities.truncate_value(value)
       d2_truncated_value = DataUtilities.truncate_value(district2_participation[key])
@@ -85,8 +85,8 @@ class HeadcountAnalyst
       kindergarten_graduation_correlation(district[:for])
     elsif district[:for] == "STATEWIDE"
       statewide_aggregated = []
-      @dr.district_objects.each do |district_object|
-        statewide_aggregated << kindergarten_graduation_correlation(district_object.name)
+      @dr.district_objects.each do |district|
+        statewide_aggregated << kindergarten_graduation_correlation(district.name)
       end
       statewide_aggregated.count(true)/statewide_aggregated.length > 0.7 ? true : false
     end
@@ -116,17 +116,16 @@ class HeadcountAnalyst
 
   def high_poverty_and_high_school_graduation
     state = @dr.find_by_name("COLORADO")
-    rs = ResultSet.new(:matching_districts => [], :statewide_average => [])
-    rs.statewide_average << ResultEntry.new({:name => "COLORADO",
+    rs = ResultSet.new(:matching_districts => [], :statewide_average => ResultEntry.new({:name => "COLORADO",
                                              :free_and_reduced_price_lunch_rate => calculate_average_frl_number(state),
                                             #:children_in_poverty_rate => calculate_avarage_percent_of_children_in_poverty(state),
-                                            :high_school_graduation_rate => calculate_graduation_average(state)})
-    @dr.district_objects.each do |district_object|
-      if calculate_average_frl_number(district_object) > calculate_average_frl_number(state) && calculate_graduation_average(district_object) > calculate_graduation_average(state) #&& calculate_avarage_percent_of_children_in_poverty(district_object) > calculate_avarage_percent_of_children_in_poverty(state)
-        rs.matching_districts << ResultEntry.new({:name => district_object.name,
-                                              :free_and_reduced_price_lunch_rate => calculate_average_frl_number(district_object),
-                                                #:children_in_poverty_rate => calculate_avarage_percent_of_children_in_poverty(district_object),
-                                              :high_school_graduation_rate => calculate_graduation_average(district_object)})
+                                            :high_school_graduation_rate => calculate_graduation_average(state)}))
+    @dr.district_objects.each do |district|
+      if calculate_average_frl_number(district) > calculate_average_frl_number(state) && calculate_graduation_average(district) > calculate_graduation_average(state) #&& calculate_avarage_percent_of_children_in_poverty(district) > calculate_avarage_percent_of_children_in_poverty(state)
+        rs.matching_districts << ResultEntry.new({:name => district.name,
+                                              :free_and_reduced_price_lunch_rate => calculate_average_frl_number(district),
+                                                #:children_in_poverty_rate => calculate_avarage_percent_of_children_in_poverty(district),
+                                              :high_school_graduation_rate => calculate_graduation_average(district)})
       end
     end
     rs
@@ -134,15 +133,15 @@ class HeadcountAnalyst
 
   def high_income_disparity
     state = @dr.find_by_name("COLORADO")
-    rs = ResultSet.new(:matching_districts => [], :statewide_average => [])
-    rs.statewide_average << ResultEntry.new({:median_household_income => calculate_average_of_median_household_income(state),
+    rs = ResultSet.new(:matching_districts => [], :statewide_average =>
+        ResultEntry.new({:median_household_income => calculate_average_of_median_household_income(state),
                                             #:children_in_poverty_rate => calculate_avarage_percent_of_children_in_poverty(state)
-                                            })
-    @dr.district_objects.each do |district_object|
-      if  calculate_average_of_median_household_income(district_object) > calculate_average_of_median_household_income(state) #&& calculate_avarage_percent_of_children_in_poverty(district_object) > calculate_avarage_percent_of_children_in_poverty(state)
-        rs.matching_districts << ResultEntry.new({:median_household_income => calculate_average_of_median_household_income(district_object),
-                                                #:children_in_poverty_rate => calculate_avarage_percent_of_children_in_poverty(district_object)
-                                                  :name => district_object.enrollment.data[:name]})
+                                            }))
+    @dr.district_objects.each do |district|
+      if  calculate_average_of_median_household_income(district) > calculate_average_of_median_household_income(state) #&& calculate_avarage_percent_of_children_in_poverty(district) > calculate_avarage_percent_of_children_in_poverty(state)
+        rs.matching_districts << ResultEntry.new({:median_household_income => calculate_average_of_median_household_income(district),
+                                                #:children_in_poverty_rate => calculate_avarage_percent_of_children_in_poverty(district)
+                                                  :name => district.enrollment.data[:name]})
       end
     end
     rs
@@ -156,26 +155,26 @@ class HeadcountAnalyst
     calculate_average_of_median_household_income(district)/calculate_average_of_median_household_income(state)
   end
 
-  def kindergarten_participation_against_household_income(district_name_symbol)
-    kindergarten_participation_rate_variation(district_name_symbol, :against => "COLORADO") / median_household_income_variation(district_name_symbol)
+  def kindergarten_participation_against_household_income(district_name)
+    kindergarten_participation_rate_variation(district_name, :against => "COLORADO") / median_household_income_variation(district_name)
   end
 
-  def true_or_false_kindergarten_correlates_with_income(district_name_symbol)
-    variation = kindergarten_participation_against_household_income(district_name_symbol)
+  def true_or_false_kindergarten_correlates_with_income(district_name)
+    variation = kindergarten_participation_against_household_income(district_name)
     variation > 0.6 && variation < 1.5 ? true : false
   end
 
-  def kindergarten_participation_correlates_with_household_income(district_name_symbol)
-    if district_name_symbol.keys == [:for] && district_name_symbol.values != ["STATEWIDE"]
-      true_or_false_kindergarten_correlates_with_income(district_name_symbol[:for])
-    elsif district_name_symbol.values == ["STATEWIDE"]
-      aggregated = @dr.district_objects.map do |district_object|
-        true_or_false_kindergarten_correlates_with_income(district_object.name)
+  def kindergarten_participation_correlates_with_household_income(district_name)
+    if district_name.keys == [:for] && district_name.values != ["STATEWIDE"]
+      true_or_false_kindergarten_correlates_with_income(district_name[:for])
+    elsif district_name.values == ["STATEWIDE"]
+      aggregated = @dr.district_objects.map do |district|
+        true_or_false_kindergarten_correlates_with_income(district.name)
       end
       aggregated.count(true)/aggregated.length > 0.7 ? true : false
-    elsif district_name_symbol.keys == [:across]
-      aggregated = district_name_symbol[:across].map do |district_name|
-        true_or_false_kindergarten_correlates_with_income(district_name)
+    elsif district_name.keys == [:across]
+      aggregated = district_name[:across].map do |district|
+        true_or_false_kindergarten_correlates_with_income(district)
       end
       aggregated.count(true)/aggregated.length > 0.7 ? true : false
     end
@@ -186,9 +185,5 @@ class HeadcountAnalyst
       sum += income
     end
     total.to_f / (district.economic_profile.data[:median_household_income].keys.length).to_f
-  end
-
-  def DataUtilities.truncate_value(value)
-    (sprintf "%.3f", value).to_f
   end
 end

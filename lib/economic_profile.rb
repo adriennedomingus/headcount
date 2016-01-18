@@ -1,7 +1,7 @@
 require_relative 'unknown_data_error'
 
 class EconomicProfile
-  attr_reader :data, :name
+  attr_reader :data
 
   def initialize(data)
     @data = data
@@ -12,7 +12,6 @@ class EconomicProfile
   end
 
   def median_household_income_in_year(year)
-    #FIX THIS TO WORK FOR ANY YEAR THAT MIGHT BE PASSED
     years = (2005..2015).to_a
     if !years.include?(year)
       raise UnknownDataError
@@ -38,35 +37,19 @@ class EconomicProfile
   end
 
   def children_in_poverty_in_year(year)
-    if data[:children_in_poverty][year]
-      data[:children_in_poverty][year]
-    else
-      raise UnknownDataError
-    end
+    data[:children_in_poverty][year] ||= raise UnknownDataError
   end
 
   def free_or_reduced_price_lunch_percentage_in_year(year)
-    if data[:free_or_reduced_price_lunch][year][:percentage]
-      data[:free_or_reduced_price_lunch][year][:percentage]
-    else
-      raise UnknownDataError
-    end
+    data[:free_or_reduced_price_lunch][year][:percentage] ||= raise UnknownDataError
   end
 
   def free_or_reduced_price_lunch_number_in_year(year)
-    if data[:free_or_reduced_price_lunch][year][:total]
-      data[:free_or_reduced_price_lunch][year][:total]
-    else
-      raise UnknownDataError
-    end
+    data[:free_or_reduced_price_lunch][year][:total] ||= raise UnknownDataError
   end
 
   def title_i_in_year(year)
-    if data[:title_i][year]
-      data[:title_i][year]
-    else
-      raise UnknownDataError
-    end
+    data[:title_i][year] ||= raise UnknownDataError
   end
 
   def set_free_or_reduced_price_lunch_percentage(year, number)

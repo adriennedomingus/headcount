@@ -10,12 +10,12 @@ class StatewideTestRepository
   end
 
   def load_data(hash)
-    DataUtilities.load_testing_data(hash, @statewide_objects)
+    DataUtilities.load_testing_data(hash, statewide_objects)
   end
 
   def find_by_name(name)
     statewide_objects.find do |statewide|
-      name.upcase == statewide.data[:name].upcase
+      name.upcase == statewide.name.upcase
     end
   end
 end

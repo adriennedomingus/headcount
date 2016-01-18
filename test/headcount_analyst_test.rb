@@ -132,11 +132,13 @@ class HeadcountAnalystTest < MiniTest::Test
 
   def test_high_poverty_and_high_school_graduation
     assert_equal 0.529, @ha.high_poverty_and_high_school_graduation.matching_districts[4].free_and_reduced_price_lunch_rate
+
     assert @ha.high_poverty_and_high_school_graduation.is_a?(ResultSet)
   end
 
   def test_high_income_disparity
     assert_equal 71091.2, @ha.high_income_disparity.matching_districts[1].median_household_income
+
     assert @ha.high_income_disparity.is_a?(ResultSet)
   end
 end

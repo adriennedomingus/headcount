@@ -11,12 +11,12 @@ class EnrollmentRepository
   end
 
   def load_data(hash)
-    DataUtilities.load_enrollment_data(hash, @enrollment_objects)
+    DataUtilities.load_enrollment_data(hash, enrollment_objects)
   end
 
   def find_by_name(name)
-    @enrollment_objects.find do |enrollment_object|
-      enrollment_object.data[:name] == name.upcase
+    @enrollment_objects.find do |enrollment|
+      enrollment.name == name.upcase
     end
   end
 end

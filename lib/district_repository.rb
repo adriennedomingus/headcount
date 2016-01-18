@@ -12,18 +12,18 @@ class DistrictRepository
   end
 
   def load_data(hash)
-    DataUtilities.load_all_data(hash, @district_objects)
+    DataUtilities.load_all_data(hash, district_objects)
   end
 
   def find_by_name(name)
-    district_objects.find do |district_object|
-      district_object.enrollment.data[:name].upcase == name.upcase
+    district_objects.find do |district|
+      district.enrollment.name.upcase == name.upcase
     end
   end
 
   def find_all_matching(name_fragment)
-    district_objects.select do |district_object|
-      district_object.enrollment.data[:name].upcase.include?(name_fragment.upcase)
+    district_objects.select do |district|
+      district.enrollment.name.upcase.include?(name_fragment.upcase)
     end
   end
 end

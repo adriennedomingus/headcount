@@ -10,7 +10,7 @@ class EconomicProfileRepository
   end
 
   def load_data(hash)
-    DataUtilities.load_economic_data(hash, @economic_profile_objects)
+    DataUtilities.load_economic_data(hash, economic_profile_objects)
   end
 
   def find_by_name(name)

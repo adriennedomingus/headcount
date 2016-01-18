@@ -1,7 +1,7 @@
 require_relative 'unknown_data_error'
 
 class StatewideTest
-  attr_reader :data, :name
+  attr_reader :data
 
   def initialize(data)
     @data = data
