@@ -12,6 +12,7 @@ class EconomicProfile
   end
 
   def median_household_income_in_year(year)
+    #FIX THIS TO WORK FOR ANY YEAR THAT MIGHT BE PASSED
     years = (2005..2015).to_a
     if !years.include?(year)
       raise UnknownDataError

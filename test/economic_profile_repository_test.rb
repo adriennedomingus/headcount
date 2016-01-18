@@ -35,7 +35,6 @@ class EconomicProfileRepositoryTest < Minitest::Test
                 2012=>{:total=>733, :percentage=>0.53465},
                 2014=>{:percentage=>0.52413, :total=>695}},
                 :title_i=>{2009=>0.504, 2011=>0.671, 2012=>0.69292, 2013=>0.7037, 2014=>0.71493}}
-
     assert_equal result, @epr.economic_profile_objects[3].data
   end
 
