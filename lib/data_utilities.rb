@@ -39,40 +39,17 @@ class DataUtilities
   def self.load_all_data(hash, district_objects)
     read_district_files(hash)
     @contents.each do |row|
-      if district_objects.empty?
-        district_objects << District.new({:name => row[:location]})
-      elsif !district_objects.any? { |district_object| district_object.name == row[:location].upcase }
+      if district_objects.empty? || district_objects.none? { |district_object| district_object.name == row[:location].upcase }
         district_objects << District.new({:name => row[:location]})
       end
     end
     if hash[:statewide_testing]
-      @str = StatewideTestRepository.new
-      @str.load_data(:statewide_testing => hash[:statewide_testing])
-      district_objects.each do |district_object|
-        @str.statewide_objects.each do |statewide_object|
-          if statewide_object.data[:name].upcase == district_object.name
-            district_object.statewide_test = StatewideTest.new(statewide_object.data)
-          end
-        end
-      end
+      create_new_statewide_testing_objects(hash, district_objects)
     end
     if hash[:economic_profile]
-      @epr = EconomicProfileRepository.new
-      @epr.load_data(:economic_profile => hash[:economic_profile])
-      district_objects.each do |district_object|
-        @epr.economic_profile_objects.each do |economic_profile_object|
-          if economic_profile_object.data[:name].upcase == district_object.name.upcase
-            district_object.economic_profile = EconomicProfile.new(economic_profile_object.data)
-          end
-        end
-      end
+      create_new_economic_profile_objects(hash, district_objects)
     end
-    @er = EnrollmentRepository.new
-    if !hash[:enrollment][:high_school_graduation]
-      @er.load_data(:enrollment => {:kindergarten => hash[:enrollment][:kindergarten]})
-    else
-      @er.load_data(:enrollment => hash[:enrollment])
-    end
+    create_new_enrollment_repository(hash)
     district_objects.each do |district_object|
       @er.enrollment_objects.each do |enrollment_object|
         if enrollment_object.data[:name].upcase == district_object.name
@@ -82,7 +59,37 @@ class DataUtilities
     end
   end
 
+  def self.create_new_enrollment_repository(hash)
+    @er = EnrollmentRepository.new
+    if !hash[:enrollment][:high_school_graduation]
+      @er.load_data(:enrollment => {:kindergarten => hash[:enrollment][:kindergarten]})
+    else
+      @er.load_data(:enrollment => hash[:enrollment])
+    end
+  end
 
+  def self.create_new_statewide_testing_objects(hash, district_objects)
+    @str = StatewideTestRepository.new
+    @str.load_data(:statewide_testing => hash[:statewide_testing])
+    district_objects.each do |district_object|
+      @str.statewide_objects.find do |statewide_object|
+        statewide_object.data[:name].upcase == district_object.name
+        district_object.statewide_test = StatewideTest.new(statewide_object.data)
+      end
+    end
+  end
+
+  def self.create_new_economic_profile_objects(hash, district_objects)
+    @epr = EconomicProfileRepository.new
+    @epr.load_data(:economic_profile => hash[:economic_profile])
+    district_objects.each do |district_object|
+      @epr.economic_profile_objects.each do |economic_profile_object|
+        if economic_profile_object.data[:name].upcase == district_object.name.upcase
+          district_object.economic_profile = EconomicProfile.new(economic_profile_object.data)
+        end
+      end
+    end
+  end
 
   def self.load_testing_data(hash, statewide_objects)
     read_testing_files(hash)
@@ -91,7 +98,7 @@ class DataUtilities
         create_new_statewide_object_hash(statewide_objects, row)
         add_data_to_existing_statewide_object(statewide_objects, row, :third_grade, :score)
       else
-        if statewide_objects.any? { |statewide_object| statewide_object.name == row[:location] }
+        if statewide_objects.find { |statewide_object| statewide_object.name == row[:location] }
           add_data_to_existing_statewide_object(statewide_objects, row, :third_grade, :score)
         end
       end
@@ -116,22 +123,15 @@ class DataUtilities
   def self.load_economic_data(hash, economic_profile_objects)
     read_economic_files(hash)
     @mhi_contents.each do |row|
-      if economic_profile_objects.empty?
-        create_new_economic_profile_object(economic_profile_objects, row)
+      if economic_profile_objects.empty? || economic_profile_objects.none? { |economic_profile_object| economic_profile_object.name.upcase == row[:location].upcase }
+        create_new_economic_profile_object_hash(economic_profile_objects, row)
         economic_profile_objects.each do |economic_profile_object|
           if row[:location].upcase == economic_profile_object.name.upcase
             economic_profile_object.data[:median_household_income][row[:timeframe].split("-").map! { |year| year.to_i}] = row[:data].to_i
           end
         end
       end
-      if economic_profile_objects.any? { |economic_profile_object| economic_profile_object.name.upcase == row[:location].upcase }
-        economic_profile_objects.each do |economic_profile_object|
-          if row[:location].upcase == economic_profile_object.name.upcase
-            economic_profile_object.data[:median_household_income][row[:timeframe].split("-").map! { |year| year.to_i}] = row[:data].to_i
-          end
-        end
-      else #only do this if NONE of them match the name, not just if the current one doesn't match the name
-        create_new_economic_profile_object(economic_profile_objects, row)
+      if economic_profile_objects.find { |economic_profile_object| economic_profile_object.name.upcase == row[:location].upcase }
         economic_profile_objects.each do |economic_profile_object|
           if row[:location].upcase == economic_profile_object.name.upcase
             economic_profile_object.data[:median_household_income][row[:timeframe].split("-").map! { |year| year.to_i}] = row[:data].to_i
@@ -242,7 +242,7 @@ class DataUtilities
     :high_school_graduation => {}})
   end
 
-  def self.create_new_economic_profile_object(economic_profile_objects, row)
+  def self.create_new_economic_profile_object_hash(economic_profile_objects, row)
     economic_profile_objects << EconomicProfile.new({:name => row[:location].upcase,
     :median_household_income => {},
     :children_in_poverty => {},

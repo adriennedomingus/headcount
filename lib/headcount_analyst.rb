@@ -98,11 +98,11 @@ class HeadcountAnalyst
   end
 
   def calculate_average_frl_number(district)
-    @total = 0
+    total = 0
     district.economic_profile.data[:free_or_reduced_price_lunch].each do |year|
-      @total += year[1][:percentage]
+      total += year[1][:percentage]
     end
-    average = DataUtilities.truncate_value(@total)/district.economic_profile.data[:free_or_reduced_price_lunch].length
+    average = DataUtilities.truncate_value(total)/district.economic_profile.data[:free_or_reduced_price_lunch].length
     DataUtilities.truncate_value(average)
   end
 
@@ -142,7 +142,7 @@ class HeadcountAnalyst
       if  calculate_average_of_median_household_income(district_object) > calculate_average_of_median_household_income(state) #&& calculate_avarage_percent_of_children_in_poverty(district_object) > calculate_avarage_percent_of_children_in_poverty(state)
         rs.matching_districts << ResultEntry.new({:median_household_income => calculate_average_of_median_household_income(district_object),
                                                 #:children_in_poverty_rate => calculate_avarage_percent_of_children_in_poverty(district_object)
-                                                })
+                                                  :name => district_object.enrollment.data[:name]})
       end
     end
     rs
