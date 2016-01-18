@@ -39,7 +39,7 @@ class DataUtilities
   def self.load_all_data(hash, district_objects)
     read_district_files(hash)
     @contents.each do |row|
-      if district_objects.empty? || district_objects.none? { |district_object| district_object.name == row[:location].upcase }
+      if no_preexisting_object_by_current_name(district_objects, row)
         district_objects << District.new({:name => row[:location]})
       end
     end
@@ -50,21 +50,31 @@ class DataUtilities
       create_new_economic_profile_objects(hash, district_objects)
     end
     create_new_enrollment_repository(hash)
-    district_objects.each do |district_object|
-      @er.enrollment_objects.each do |enrollment_object|
-        if enrollment_object.data[:name].upcase == district_object.name
-          district_object.enrollment = Enrollment.new(enrollment_object.data)
-        end
-      end
+    match_enrollment_objects_to_district_object(district_objects)
+  end
+
+  def self.no_preexisting_object_by_current_name(type_of_object, row)
+    type_of_object.empty? || type_of_object.none? do |object|
+      object.name == row[:location].upcase
     end
   end
 
   def self.create_new_enrollment_repository(hash)
     @er = EnrollmentRepository.new
     if !hash[:enrollment][:high_school_graduation]
-      @er.load_data(:enrollment => {:kindergarten => hash[:enrollment][:kindergarten]})
+      @er.load_data(:enrollment =>
+                   {:kindergarten => hash[:enrollment][:kindergarten]})
     else
       @er.load_data(:enrollment => hash[:enrollment])
+    end
+  end
+
+  def self.match_enrollment_objects_to_district_object(district_objects)
+    district_objects.each do |district_object|
+      match = @er.enrollment_objects.find do |enrollment_object|
+        enrollment_object.data[:name].upcase == district_object.name
+      end
+      district_object.enrollment = Enrollment.new(match.data)
     end
   end
 
@@ -72,10 +82,10 @@ class DataUtilities
     @str = StatewideTestRepository.new
     @str.load_data(:statewide_testing => hash[:statewide_testing])
     district_objects.each do |district_object|
-      @str.statewide_objects.find do |statewide_object|
+      match = @str.statewide_objects.find do |statewide_object|
         statewide_object.data[:name].upcase == district_object.name
-        district_object.statewide_test = StatewideTest.new(statewide_object.data)
       end
+      district_object.statewide_test = StatewideTest.new(match.data)
     end
   end
 
@@ -83,25 +93,21 @@ class DataUtilities
     @epr = EconomicProfileRepository.new
     @epr.load_data(:economic_profile => hash[:economic_profile])
     district_objects.each do |district_object|
-      @epr.economic_profile_objects.each do |economic_profile_object|
-        if economic_profile_object.data[:name].upcase == district_object.name.upcase
-          district_object.economic_profile = EconomicProfile.new(economic_profile_object.data)
-        end
+      match = @epr.economic_profile_objects.find do |economic_profile_object|
+        economic_profile_object.data[:name].upcase == district_object.name.upcase
       end
+      district_object.economic_profile = EconomicProfile.new(match.data)
     end
   end
 
   def self.load_testing_data(hash, statewide_objects)
     read_testing_files(hash)
     @third_grade_contents.each do |row|
-      if statewide_objects.empty? || statewide_objects.none? { |statewide_object| statewide_object.name == row[:location] }
+      if no_preexisting_object_by_current_name(statewide_objects, row)
         create_new_statewide_object_hash(statewide_objects, row)
-        add_data_to_existing_statewide_object(statewide_objects, row, :third_grade, :score)
-      else
-        if statewide_objects.find { |statewide_object| statewide_object.name == row[:location] }
-          add_data_to_existing_statewide_object(statewide_objects, row, :third_grade, :score)
-        end
       end
+      statewide_objects.find { |statewide_object| statewide_object.name == row[:location] }
+      add_data_to_existing_statewide_object(statewide_objects, row, :third_grade, :score)
     end
     @eighth_grade_contents.each do |row|
       add_data_to_existing_statewide_object(statewide_objects, row, :eighth_grade, :score)
@@ -123,21 +129,13 @@ class DataUtilities
   def self.load_economic_data(hash, economic_profile_objects)
     read_economic_files(hash)
     @mhi_contents.each do |row|
-      if economic_profile_objects.empty? || economic_profile_objects.none? { |economic_profile_object| economic_profile_object.name.upcase == row[:location].upcase }
+      if no_preexisting_object_by_current_name(economic_profile_objects, row)
         create_new_economic_profile_object_hash(economic_profile_objects, row)
-        economic_profile_objects.each do |economic_profile_object|
-          if row[:location].upcase == economic_profile_object.name.upcase
-            economic_profile_object.data[:median_household_income][row[:timeframe].split("-").map! { |year| year.to_i}] = row[:data].to_i
-          end
-        end
       end
-      if economic_profile_objects.find { |economic_profile_object| economic_profile_object.name.upcase == row[:location].upcase }
-        economic_profile_objects.each do |economic_profile_object|
-          if row[:location].upcase == economic_profile_object.name.upcase
-            economic_profile_object.data[:median_household_income][row[:timeframe].split("-").map! { |year| year.to_i}] = row[:data].to_i
-          end
-        end
+      match = economic_profile_objects.find do |economic_profile_object|
+        row[:location].upcase == economic_profile_object.name.upcase
       end
+      match.data[:median_household_income][row[:timeframe].split("-").map! { |year| year.to_i}] = row[:data].to_i
     end
     @cip_contents.each do |row|
       economic_profile_objects.each do |economic_profile_object|
@@ -183,35 +181,22 @@ class DataUtilities
   def self.load_enrollment_data(hash, enrollment_objects)
     read_enrollment_files(hash)
     @kindergarten_contents.each do |row|
-      if enrollment_objects.empty?
+      if no_preexisting_object_by_current_name(enrollment_objects, row)
         create_new_enrollment_object(enrollment_objects, row)
-        enrollment_objects.each do |enrollment_object|
-          if row[:location].upcase == enrollment_object.name.upcase
-            enrollment_object.data[:kindergarten_participation][row[:timeframe].to_i] = row[:data].to_f
-          end
-        end
-      else
-        enrollment_objects.each do |enrollment_object|
-          if enrollment_objects.any? { |enrollment_object| enrollment_object.name.upcase == row[:location].upcase }
-            if row[:location].upcase == enrollment_object.name.upcase
-              enrollment_object.data[:kindergarten_participation][row[:timeframe].to_i] = row[:data].to_f
-            end
-          else
-            create_new_enrollment_object(enrollment_objects, row)
-            if row[:location].upcase == enrollment_object.name.upcase
-              enrollment_object.data[:kindergarten_participation][row[:timeframe].to_i] = row[:data].to_f
-            end
-          end
-        end
       end
+      match_enrollment_data_to_district_data(enrollment_objects, :kindergarten_participation, row)
     end
     if @high_school_contents
       @high_school_contents.each do |row|
-        enrollment_objects.each do |enrollment_object|
-          if row[:location].upcase == enrollment_object.name.upcase
-            enrollment_object.data[:high_school_graduation][row[:timeframe].to_i] = row[:data].to_f
-          end
-        end
+        match_enrollment_data_to_district_data(enrollment_objects, :high_school_graduation, row)
+      end
+    end
+  end
+
+  def self.match_enrollment_data_to_district_data(enrollment_objects, success, row)
+    enrollment_objects.each do |enrollment_object|
+      if row[:location].upcase == enrollment_object.name.upcase
+        enrollment_object.data[success][row[:timeframe].to_i] = row[:data].to_f
       end
     end
   end
