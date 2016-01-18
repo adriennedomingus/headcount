@@ -156,4 +156,51 @@ class DataUtilities
       end
     end
   end
+
+  def self.load_enrollment_data(hash, enrollment_objects)
+    read_enrollment_files(hash)
+    @kindergarten_contents.each do |row|
+      if enrollment_objects.empty?
+        enrollment_objects << Enrollment.new({:name => row[:location].upcase,
+        :kindergarten_participation => {},
+        :high_school_graduation => {}})
+        enrollment_objects.each do |enrollment_object|
+          if row[:location].upcase == enrollment_object.name.upcase
+            enrollment_object.data[:kindergarten_participation][row[:timeframe].to_i] = row[:data].to_f
+          end
+        end
+      else
+        enrollment_objects.each do |enrollment_object|
+          if enrollment_objects.any? { |enrollment_object| enrollment_object.name.upcase == row[:location].upcase }
+            if row[:location].upcase == enrollment_object.name.upcase
+              enrollment_object.data[:kindergarten_participation][row[:timeframe].to_i] = row[:data].to_f
+            end
+          else
+            enrollment_objects << Enrollment.new({:name => row[:location],
+            :kindergarten_participation => {},
+            :high_school_graduation => {}})
+            if row[:location].upcase == enrollment_object.name.upcase
+              enrollment_object.data[:kindergarten_participation][row[:timeframe].to_i] = row[:data].to_f
+            end
+          end
+        end
+      end
+    end
+    if @high_school_contents
+      @high_school_contents.each do |row|
+        enrollment_objects.each do |enrollment_object|
+          if row[:location].upcase == enrollment_object.name.upcase
+            enrollment_object.data[:high_school_graduation][row[:timeframe].to_i] = row[:data].to_f
+          end
+        end
+      end
+    end
+  end
+
+  def self.read_enrollment_files(hash)
+    @kindergarten_contents = open_csv(hash[:enrollment][:kindergarten])
+    if hash[:enrollment][:high_school_graduation]
+      @high_school_contents = open_csv(hash[:enrollment][:high_school_graduation])
+    end
+  end
 end
