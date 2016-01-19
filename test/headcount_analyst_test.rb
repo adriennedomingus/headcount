@@ -120,10 +120,12 @@ class HeadcountAnalystTest < MiniTest::Test
   def test_whether_kindergarten_participation_correlates_with_income
     refute @ha.kindergarten_participation_correlates_with_household_income(for: "ACADEMY 20")
     refute @ha.kindergarten_participation_correlates_with_household_income(for: "BENNETT 29J")
+    assert @ha.kindergarten_participation_correlates_with_household_income(for: "ARCHULETA COUNTY 50 JT")
   end
 
   def test_kindergarten_correlation_with_income_across_specified_districts
     refute @ha.kindergarten_participation_correlates_with_household_income(across: ["BOULDER VALLEY RE 2", "ACADEMY 20"])
+    assert @ha.kindergarten_participation_correlates_with_household_income(across: ["ARCHULETA COUNTY 50 JT", "PLATEAU VALLEY 50"])
   end
 
   def test_kindergarten_correlation_with_income_statewide
@@ -131,14 +133,22 @@ class HeadcountAnalystTest < MiniTest::Test
   end
 
   def test_high_poverty_and_high_school_graduation
-    assert_equal 0.529, @ha.high_poverty_and_high_school_graduation.matching_districts[4].free_and_reduced_price_lunch_rate
-
+    assert_equal 0.603, @ha.high_poverty_and_high_school_graduation.matching_districts[1].free_and_reduced_price_lunch_rate
+    assert_equal 0.35, @ha.high_poverty_and_high_school_graduation.statewide_average.free_and_reduced_price_lunch_rate
+    assert @ha.high_poverty_and_high_school_graduation.matching_districts.is_a?(Array)
     assert @ha.high_poverty_and_high_school_graduation.is_a?(ResultSet)
+    assert @ha.high_poverty_and_high_school_graduation.statewide_average.is_a?(ResultEntry)
   end
 
   def test_high_income_disparity
-    assert_equal 71091.2, @ha.high_income_disparity.matching_districts[1].median_household_income
-
+    assert_equal 66880.4, @ha.high_income_disparity.matching_districts[1].median_household_income
+    assert_equal 0.252, @ha.high_income_disparity.matching_districts[1].children_in_poverty_rate
+    assert_equal 57408.0, @ha.high_income_disparity.statewide_average.median_household_income
+    assert_equal 0.181, @ha.high_income_disparity.statewide_average.children_in_poverty_rate
     assert @ha.high_income_disparity.is_a?(ResultSet)
+  end
+
+  def test_calculates_statewide_average_for_children_in_poverty
+    assert_equal 0.181, @ha.calculate_statewide_average_children_in_poverty
   end
 end
