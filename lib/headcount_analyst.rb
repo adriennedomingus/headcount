@@ -25,30 +25,28 @@ class HeadcountAnalyst
   def kindergarten_participation_rate_variation(district1_name, district2_name)
     @district1 = @dr.find_by_name(district1_name)
     @district2 = @dr.find_by_name(district2_name[:against])
-    district1_average = calculate_average_percent(district1,
-                                                 :kindergarten_participation)
-    district2_average = calculate_average_percent(district2,
-                                                 :kindergarten_participation)
+    district1_average = calculate_kindergarten_average(district1)
+    district2_average = calculate_kindergarten_average(district2)
     variation = district1_average / district2_average
     DataUtilities.truncate_value(variation)
   end
 
-  # def calculate_kindergarten_average(district)
-  #   total = district.enrollment.data[:kindergarten_participation].values.reduce do |sum, participation|
-  #      sum + DataUtilities.truncate_value(participation)
-  #   end
-  #   average = DataUtilities.truncate_value(total)/district.enrollment.data[:kindergarten_participation].length
-  #   DataUtilities.truncate_value(average)
-  # end
-
-  def calculate_average_percent(district, data_to_average)
-    total = district.enrollment.data[data_to_average].values.reduce do |sum, participation|
+  def calculate_kindergarten_average(district)
+    total = district.enrollment.data[:kindergarten_participation].values.reduce do |sum, participation|
        sum + DataUtilities.truncate_value(participation)
     end
-    average = DataUtilities.truncate_value(total)/
-              district.enrollment.data[data_to_average].length
+    average = DataUtilities.truncate_value(total)/district.enrollment.data[:kindergarten_participation].length
     DataUtilities.truncate_value(average)
   end
+
+  # def calculate_average_percent(district, data_to_average)
+  #   total = district.enrollment.data[data_to_average].values.reduce do |sum, participation|
+  #      sum + DataUtilities.truncate_value(participation)
+  #   end
+  #   average = DataUtilities.truncate_value(total)/
+  #             district.enrollment.data[data_to_average].length
+  #   DataUtilities.truncate_value(average)
+  # end
 
   def graduation_variation(district_name)
     district = dr.find_by_name(district_name)
@@ -102,11 +100,11 @@ class HeadcountAnalyst
     elsif district[:for] != "STATEWIDE"
       kindergarten_graduation_correlation(district[:for])
     elsif district[:for] == "STATEWIDE"
-      statewide_aggregated = []
-      @dr.district_objects.each do |district|
-        statewide_aggregated << kindergarten_graduation_correlation(district.name)
+      statewide_aggregated = @dr.district_objects.map do |district|
+        kindergarten_graduation_correlation(district.name)
       end
-      statewide_aggregated.count(true)/statewide_aggregated.length > 0.7 ? true : false
+      statewide_aggregated.count(true)/
+      statewide_aggregated.length > 0.7 ? true : false
     end
   end
 
@@ -194,13 +192,15 @@ class HeadcountAnalyst
   def median_household_income_variation(district_name)
     district = @dr.find_by_name(district_name)
     state = @dr.find_by_name("COLORADO")
-    calculate_average_of_median_household_income(district)/
+    mhi_variation = calculate_average_of_median_household_income(district)/
     calculate_average_of_median_household_income(state)
+    DataUtilities.truncate_value(mhi_variation)
   end
 
   def kindergarten_participation_against_household_income(district_name)
-    kindergarten_participation_rate_variation(district_name,
+    kp_hi_result = kindergarten_participation_rate_variation(district_name,
     :against => "COLORADO") / median_household_income_variation(district_name)
+    DataUtilities.truncate_value(kp_hi_result)
   end
 
   def true_or_false_kindergarten_correlates_with_income(district_name)

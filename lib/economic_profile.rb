@@ -33,7 +33,8 @@ class EconomicProfile
     total = data[:median_household_income].values.reduce do |sum, income|
       sum + income
     end
-    total.to_f / (data[:median_household_income].keys.length).to_f
+    average = total.to_f / (data[:median_household_income].keys.length).to_f
+    DataUtilities.truncate_value(average)
   end
 
   def children_in_poverty_in_year(year)

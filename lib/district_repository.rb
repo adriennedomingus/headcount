@@ -84,5 +84,4 @@ class DistrictRepository
       district.economic_profile = EconomicProfile.new(match.data)
     end
   end
-
 end

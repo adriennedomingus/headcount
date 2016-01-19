@@ -9,6 +9,8 @@ class StatewideTestRepository
     @statewide_objects = []
   end
 
+  UNDEFINED_DATA = ["N/A", nil, "#DIV/0!", "#REF!", "LNE", "#VALUE!"]
+
   def find_by_name(name)
     statewide_objects.find do |statewide|
       name.upcase == statewide.name.upcase
@@ -46,7 +48,7 @@ class StatewideTestRepository
     statewide_objects.each do |statewide|
       if row[:location] == statewide.name
         statewide.data[data_type][row[:timeframe].to_i] ||= {}
-        if row[:data] == "N/A" || row[:data] == "LNE" || row[:data] == "#VALUE"
+        if UNDEFINED_DATA.include?(row[:data])
           statewide.data[data_type][row[:timeframe].to_i][subject] = row[:data]
         else
           statewide.data[data_type][row[:timeframe].to_i][subject] = row[:data].to_f

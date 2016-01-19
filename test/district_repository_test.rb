@@ -32,7 +32,6 @@ class DistrictRepositoryTest < MiniTest::Test
   end
 
   def test_find_by_name_method_returns_instantiated_object_name
-
     assert_equal "ADAMS-ARAPAHOE 28J", @dr.find_by_name("ADAMS-ARAPAHOE 28J").name
   end
 
@@ -40,11 +39,15 @@ class DistrictRepositoryTest < MiniTest::Test
     assert_equal "ADAMS-ARAPAHOE 28J", @dr.find_by_name("Adams-Arapahoe 28J").name
   end
 
+  def test_returns_nil_if_district_by_name_doesnt_exist
+      assert_equal nil, @dr.find_by_name("Aldkfjalkd")
+  end
+
   def test_find_all_matching
     assert_equal 2, @dr.find_all_matching("Adams").count
   end
 
-  def test_starting_relationships_layer
+  def test_relationship_with_enrollment_data
     district = @dr.find_by_name("ACADEMY 20")
 
     assert_equal 0.43628, district.enrollment.kindergarten_participation_in_year(2010)

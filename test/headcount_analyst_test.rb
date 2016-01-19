@@ -26,8 +26,8 @@ class HeadcountAnalystTest < MiniTest::Test
   def test_calculates_kindergarten_average
     @ha.kindergarten_participation_rate_variation('ACADEMY 20', :against => 'COLORADO')
 
-    assert_equal 0.407, @ha.calculate_average_percent(@ha.district1, :kindergarten_participation)
-    assert_equal 0.53, @ha.calculate_average_percent(@ha.district2, :kindergarten_participation)
+    assert_equal 0.407, @ha.calculate_kindergarten_average(@ha.district1)
+    assert_equal 0.53, @ha.calculate_kindergarten_average(@ha.district2)
   end
 
   def test_calculates_high_school_graduation_average
@@ -106,11 +106,11 @@ class HeadcountAnalystTest < MiniTest::Test
   end
 
   def test_calculates_median_household_income_variation
-    assert_equal 1.526536371237458, @ha.median_household_income_variation("ACADEMY 20")
+    assert_equal 1.527, @ha.median_household_income_variation("ACADEMY 20")
   end
 
   def test_kindergarten_participation_against_household_income
-    assert_equal 0.5030997062830774, @ha.kindergarten_participation_against_household_income("ACADEMY 20")
+    assert_equal 0.503, @ha.kindergarten_participation_against_household_income("ACADEMY 20")
   end
 
   def test_kindergarten_and_income_correlation_returns_true_or_false
