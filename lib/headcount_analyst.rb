@@ -32,21 +32,17 @@ class HeadcountAnalyst
   end
 
   def calculate_kindergarten_average(district)
-    total = district.enrollment.data[:kindergarten_participation].values.reduce do |sum, participation|
-       sum + DataUtilities.truncate_value(participation)
-    end
-    average = DataUtilities.truncate_value(total)/district.enrollment.data[:kindergarten_participation].length
-    DataUtilities.truncate_value(average)
+    calculate_average_percent(district.enrollment, :kindergarten_participation)
   end
 
-  # def calculate_average_percent(district, data_to_average)
-  #   total = district.enrollment.data[data_to_average].values.reduce do |sum, participation|
-  #      sum + DataUtilities.truncate_value(participation)
-  #   end
-  #   average = DataUtilities.truncate_value(total)/
-  #             district.enrollment.data[data_to_average].length
-  #   DataUtilities.truncate_value(average)
-  # end
+  def calculate_average_percent(object, data_to_average)
+    total = object.data[data_to_average].values.reduce do |sum, participation|
+       sum + DataUtilities.truncate_value(participation)
+    end
+    average = DataUtilities.truncate_value(total)/
+              object.data[data_to_average].length
+    DataUtilities.truncate_value(average)
+  end
 
   def graduation_variation(district_name)
     district = dr.find_by_name(district_name)
@@ -57,12 +53,7 @@ class HeadcountAnalyst
   end
 
   def calculate_graduation_average(district)
-    total = district.enrollment.data[:high_school_graduation].values.reduce do |sum, participation|
-       sum + participation
-    end
-    average = DataUtilities.truncate_value(total) /
-              district.enrollment.data[:high_school_graduation].length
-    DataUtilities.truncate_value(average)
+    calculate_average_percent(district.enrollment, :high_school_graduation)
   end
 
   def kindergarten_variation(district)
@@ -123,12 +114,7 @@ class HeadcountAnalyst
   end
 
   def calculate_avarage_percent_of_children_in_poverty(district)
-    total = district.economic_profile.data[:children_in_poverty].values.reduce do |sum, participation|
-       sum + DataUtilities.truncate_value(participation)
-    end
-    average = DataUtilities.truncate_value(total)/
-              district.economic_profile.data[:children_in_poverty].length
-    DataUtilities.truncate_value(average)
+    calculate_average_percent(district.economic_profile, :children_in_poverty)
   end
 
   def high_poverty_and_high_school_graduation
@@ -228,10 +214,6 @@ class HeadcountAnalyst
   end
 
   def calculate_average_of_median_household_income(district)
-    total = district.economic_profile.data[:median_household_income].values.reduce do |sum, income|
-      sum + income
-    end
-    total.to_f /
-    (district.economic_profile.data[:median_household_income].keys.length).to_f
+    calculate_average_percent(district.economic_profile, :median_household_income)
   end
 end
