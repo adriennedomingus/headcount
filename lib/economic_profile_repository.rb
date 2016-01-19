@@ -41,7 +41,7 @@ class EconomicProfileRepository
       match = economic_profile_objects.find do |economic_profile|
         row[:location].upcase == economic_profile.name.upcase
       end
-      year = row[:timeframe].split("-").map! { |year| year.to_i}
+      year = row[:timeframe].split("-").map! { |range| range.to_i}
       match.data[:median_household_income][year] = row[:data].to_i
     end
   end

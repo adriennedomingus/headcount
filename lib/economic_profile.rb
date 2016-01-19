@@ -19,11 +19,11 @@ class EconomicProfile
     sum = 0
     divisor = 0
     data_to_analyze = data[:median_household_income]
-    data_to_analyze.keys.each do |years|
-      range = (years[0]..years[1]).to_a
+    data_to_analyze.keys.each do |all_years|
+      range = (all_years[0]..all_years[1]).to_a
       if range.include?(year)
         divisor += 1
-        sum += data_to_analyze[years]
+        sum += data_to_analyze[all_years]
       end
     end
     sum.to_f / divisor.to_f

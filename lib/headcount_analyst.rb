@@ -96,15 +96,14 @@ class HeadcountAnalyst
       aggregated = district[:across].map do |district_name|
         kindergarten_graduation_correlation(district_name)
       end
-      aggregated.count(true)/aggregated.length > 0.7 ? true : false
+      aggregated_greater_or_lesser_than_seventy_percent(aggregated)
     elsif district[:for] != "STATEWIDE"
       kindergarten_graduation_correlation(district[:for])
     elsif district[:for] == "STATEWIDE"
-      statewide_aggregated = @dr.district_objects.map do |district|
-        kindergarten_graduation_correlation(district.name)
+      statewide_aggregated = @dr.district_objects.map do |school_district|
+        kindergarten_graduation_correlation(school_district.name)
       end
-      statewide_aggregated.count(true)/
-      statewide_aggregated.length > 0.7 ? true : false
+      aggregated_greater_or_lesser_than_seventy_percent(statewide_aggregated)
     end
   end
 
@@ -215,13 +214,17 @@ class HeadcountAnalyst
       aggregated = @dr.district_objects.map do |district|
         true_or_false_kindergarten_correlates_with_income(district.name)
       end
-      aggregated.count(true)/aggregated.length > 0.7 ? true : false
+      aggregated_greater_or_lesser_than_seventy_percent(aggregated)
     elsif district_name.keys == [:across]
       aggregated = district_name[:across].map do |district|
         true_or_false_kindergarten_correlates_with_income(district)
       end
-      aggregated.count(true)/aggregated.length > 0.7 ? true : false
+      aggregated_greater_or_lesser_than_seventy_percent(aggregated)
     end
+  end
+
+  def aggregated_greater_or_lesser_than_seventy_percent(aggregated)
+    aggregated.count(true)/aggregated.length > 0.7 ? true : false
   end
 
   def calculate_average_of_median_household_income(district)
