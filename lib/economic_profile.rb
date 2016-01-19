@@ -31,7 +31,7 @@ class EconomicProfile
 
   def median_household_income_average
     total = data[:median_household_income].values.reduce do |sum, income|
-      sum += income
+      sum + income
     end
     total.to_f / (data[:median_household_income].keys.length).to_f
   end
@@ -41,7 +41,8 @@ class EconomicProfile
   end
 
   def free_or_reduced_price_lunch_percentage_in_year(year)
-    data[:free_or_reduced_price_lunch][year][:percentage] ||= raise UnknownDataError
+    data[:free_or_reduced_price_lunch][year][:percentage] ||=
+    raise UnknownDataError
   end
 
   def free_or_reduced_price_lunch_number_in_year(year)
@@ -52,12 +53,12 @@ class EconomicProfile
     data[:title_i][year] ||= raise UnknownDataError
   end
 
-  def set_free_or_reduced_price_lunch_percentage(year, number)
+  def set_frl_percentage(year, number)
     data[:free_or_reduced_price_lunch][year] ||= {}
     data[:free_or_reduced_price_lunch][year][:percentage] = number
   end
 
-  def set_free_or_reduced_price_lunch_total(year, number)
+  def set_frl_total(year, number)
     data[:free_or_reduced_price_lunch][year] ||= {}
     data[:free_or_reduced_price_lunch][year][:total] = number
   end

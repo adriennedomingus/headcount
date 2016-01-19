@@ -22,10 +22,12 @@ class StatewideTestRepository
         create_new_statewide_object_hash(statewide_objects, row)
       end
       statewide_objects.find { |statewide| statewide.name == row[:location] }
-      add_data_to_existing_statewide_object(statewide_objects, row, :third_grade, :score)
+      add_data_to_existing_statewide_object(statewide_objects,
+      row, :third_grade, :score)
     end
     @eighth_grade_contents.each do |row|
-      add_data_to_existing_statewide_object(statewide_objects, row, :eighth_grade, :score)
+      add_data_to_existing_statewide_object(statewide_objects,
+      row, :eighth_grade, :score)
     end
     load_subject_data(statewide_objects)
   end

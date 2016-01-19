@@ -49,7 +49,9 @@ class EconomicProfileRepository
   def load_children_in_poverty_data(economic_profile_objects)
     @cip_contents.each do |row|
       next unless row[:dataformat] == "Percent"
-      matching_epo = economic_profile_objects.find { |economic_profile| row[:location].upcase == economic_profile.name.upcase }
+      matching_epo = economic_profile_objects.find do |economic_profile|
+        row[:location].upcase == economic_profile.name.upcase
+      end
       matching_epo.data[:children_in_poverty][row[:timeframe].to_i] = row[:data].to_f
     end
   end
@@ -61,9 +63,9 @@ class EconomicProfileRepository
         row[:location].upcase == economic_profile.name.upcase
       end
       if row[:dataformat] == "Percent"
-        matching_epo.set_free_or_reduced_price_lunch_percentage(row[:timeframe].to_i, row[:data].to_f)
+        matching_epo.set_frl_percentage(row[:timeframe].to_i, row[:data].to_f)
       elsif row[:dataformat] == "Number"
-        matching_epo.set_free_or_reduced_price_lunch_total(row[:timeframe].to_i, row[:data].to_i)
+        matching_epo.set_frl_total(row[:timeframe].to_i, row[:data].to_i)
       end
     end
   end
@@ -79,7 +81,8 @@ class EconomicProfileRepository
 
 
   def create_new_economic_profile_object_hash(economic_profile_objects, row)
-    economic_profile_objects << EconomicProfile.new({:name => row[:location].upcase,
+    economic_profile_objects <<
+    EconomicProfile.new({:name => row[:location].upcase,
     :median_household_income => {},
     :children_in_poverty => {},
     :free_or_reduced_price_lunch => {},

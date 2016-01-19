@@ -24,7 +24,7 @@ class DistrictRepository
   end
 
   def load_data(hash)
-    read_district_files(hash)
+    read_district_files
     @contents.each do |row|
       if DataUtilities.no_preexisting_object_by_current_name(district_objects, row)
         district_objects << District.new({:name => row[:location]})
@@ -40,7 +40,7 @@ class DistrictRepository
     match_enrollment_objects_to_district_object(district_objects)
   end
 
-  def read_district_files(hash)
+  def read_district_files
     @contents = DataUtilities.open_csv( "./data/Kindergartners in full-day program.csv")
   end
 

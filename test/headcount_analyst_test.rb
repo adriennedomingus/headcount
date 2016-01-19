@@ -26,8 +26,8 @@ class HeadcountAnalystTest < MiniTest::Test
   def test_calculates_kindergarten_average
     @ha.kindergarten_participation_rate_variation('ACADEMY 20', :against => 'COLORADO')
 
-    assert_equal 0.407, @ha.calculate_kindergarten_average(@ha.district1)
-    assert_equal 0.53, @ha.calculate_kindergarten_average(@ha.district2)
+    assert_equal 0.407, @ha.calculate_average_percent(@ha.district1, :kindergarten_participation)
+    assert_equal 0.53, @ha.calculate_average_percent(@ha.district2, :kindergarten_participation)
   end
 
   def test_calculates_high_school_graduation_average

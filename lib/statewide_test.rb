@@ -32,7 +32,7 @@ class StatewideTest
     end
     result = {}
     math_data = data[:math]
-    math_data.each do |year, data|
+    math_data.each do |year, _|
       result[year] = {:math => math_data[year][race]}
     end
     add_data_by_race(data[:reading], result, :reading, race)

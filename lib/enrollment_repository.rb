@@ -22,11 +22,13 @@ class EnrollmentRepository
       if DataUtilities.no_preexisting_object_by_current_name(enrollment_objects, row)
         create_new_enrollment_object(enrollment_objects, row)
       end
-      match_enrollment_data_to_district_data(enrollment_objects, :kindergarten_participation, row)
+      match_enrollment_data_to_district_data(enrollment_objects,
+      :kindergarten_participation, row)
     end
     if @high_school_contents
       @high_school_contents.each do |row|
-        match_enrollment_data_to_district_data(enrollment_objects, :high_school_graduation, row)
+        match_enrollment_data_to_district_data(enrollment_objects,
+        :high_school_graduation, row)
       end
     end
   end
