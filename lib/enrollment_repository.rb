@@ -1,6 +1,3 @@
-require_relative 'enrollment'
-require 'csv'
-require_relative 'data_utilities'
 require_relative 'enrollment_data_formatter'
 
 class EnrollmentRepository

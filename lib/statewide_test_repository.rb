@@ -1,7 +1,4 @@
-require 'csv'
-require_relative 'statewide_test'
 require_relative  'statewide_data_formatter'
-require_relative 'data_utilities'
 
 class StatewideTestRepository
   attr_reader :statewide_objects, :data

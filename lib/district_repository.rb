@@ -1,16 +1,9 @@
-require_relative 'enrollment_repository'
-require_relative 'economic_profile_repository'
-require_relative 'statewide_test_repository'
-require_relative 'district'
-require_relative 'data_utilities'
 require_relative 'district_data_formatter'
 
 class DistrictRepository
-  attr_reader :district_objects, :name, :er, :epr, :str
-
+  attr_reader :district_objects, :name
   def initialize(district_objects = [])
     @district_objects = district_objects
-    @du = DataUtilities.new
   end
 
   def load_data(hash)

@@ -1,4 +1,5 @@
 require 'csv'
+require_relative 'enrollment'
 require_relative 'data_utilities'
 
 class EnrollmentDataFormatter

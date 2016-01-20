@@ -1,5 +1,3 @@
-require_relative 'economic_profile'
-require_relative 'data_utilities'
 require_relative 'economic_data_formatter'
 
 class EconomicProfileRepository
