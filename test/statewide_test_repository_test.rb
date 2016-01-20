@@ -12,7 +12,7 @@ class StatewideTestRepositoryTest < MiniTest::Test
       :math => "./data/Average proficiency on the CSAP_TCAP by race_ethnicity_ Math.csv",
       :reading => "./data/Average proficiency on the CSAP_TCAP by race_ethnicity_ Reading.csv",
       :writing => "./data/Average proficiency on the CSAP_TCAP by race_ethnicity_ Writing.csv"}})
-    result = {:math=>0.47059, :writing=>0.55882, :reading=>0.64706}
+    result = {:math=>0.471, :writing=>0.559, :reading=>0.647}
     assert_equal result, str.statewide_objects[5].data[:eighth_grade][2012]
   end
 
@@ -26,13 +26,7 @@ class StatewideTestRepositoryTest < MiniTest::Test
       :writing => "./data/Average proficiency on the CSAP_TCAP by race_ethnicity_ Writing.csv"}})
 
     result = str.find_by_name("ADAMS-ARAPAHOE 28J")
-    math_result = {:all_students=>0.37735,
-                   :asian=>0.4859, :black=>0.2916,
-                   :hawaiian_pacific_islander=>0.4438,
-                   :hispanic=>0.3356,
-                   :native_american=>0.4438,
-                   :two_or_more=>0.4452,
-                   :white=>0.5502}
+    math_result = {:all_students=>0.377, :asian=>0.486, :black=>0.292, :hawaiian_pacific_islander=>0.444, :hispanic=>0.336, :native_american=>0.444, :two_or_more=>0.445, :white=>0.55}
 
     assert_equal true, result.data.include?(:third_grade)
     assert_equal "ADAMS-ARAPAHOE 28J", result.data[:name]
