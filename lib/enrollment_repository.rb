@@ -1,6 +1,7 @@
 require_relative 'enrollment'
 require 'csv'
 require_relative 'data_utilities'
+require_relative 'enrollment_data_formatter'
 
 class EnrollmentRepository
 
@@ -11,7 +12,7 @@ class EnrollmentRepository
   end
 
   def load_data(hash)
-    DataUtilities.load_enrollment_data(hash, enrollment_objects)
+    EnrollmentDataFormatter.load_enrollment_data(hash, enrollment_objects)
   end
 
   def find_by_name(name)

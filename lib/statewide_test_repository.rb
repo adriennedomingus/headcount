@@ -11,7 +11,7 @@ class StatewideTestRepository
   end
 
   def load_data(hash)
-    DataUtilities.load_testing_data(hash, statewide_objects)
+    StatewideDataFormatter.load_testing_data(hash, statewide_objects)
   end
 
   def find_by_name(name)

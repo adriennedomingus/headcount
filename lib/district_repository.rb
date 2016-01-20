@@ -3,6 +3,7 @@ require_relative 'economic_profile_repository'
 require_relative 'statewide_test_repository'
 require_relative 'district'
 require_relative 'data_utilities'
+require_relative 'district_data_formatter'
 
 class DistrictRepository
   attr_reader :district_objects, :name, :er, :epr, :str
@@ -13,7 +14,7 @@ class DistrictRepository
   end
 
   def load_data(hash)
-    DataUtilities.load_all_data(hash, district_objects)
+    DistrictDataFormatter.load_all_data(hash, district_objects)
   end
 
   def find_by_name(name)
