@@ -36,9 +36,8 @@ class HeadcountAnalyst
     district1_participation = @dr.find_by_name(district1_name).enrollment.data[:kindergarten_participation]
     district2_participation = @dr.find_by_name(district2_name[:against]).enrollment.data[:kindergarten_participation]
     district1_participation.each do |key, value|
-      d1_truncated_value = DataUtilities.truncate_value(value)
-      d2_truncated_value = DataUtilities.truncate_value(district2_participation[key])
-      result[key] = DataUtilities.truncate_value(d1_truncated_value/d2_truncated_value)
+      result[key] = DataUtilities.truncate_value(district1_participation[key]/
+        district2_participation[key])
     end
     result
   end
@@ -63,8 +62,8 @@ class HeadcountAnalyst
 
   def kindergarten_participation_correlates_with_high_school_graduation(district_name)
     if district_name.keys == [:across]
-      aggregated = district_name[:across].map do |district_name|
-        true_or_false_kindergarten_correlates_with_graduation(district_name)
+      aggregated = district_name[:across].map do |district|
+        true_or_false_kindergarten_correlates_with_graduation(district)
       end
       aggregated_greater_or_lesser_than_seventy_percent(aggregated)
     elsif district_name[:for] != "STATEWIDE"
@@ -172,13 +171,11 @@ class HeadcountAnalyst
   end
 
   def calculate_statewide_average_children_in_poverty
-    district_averages = @dr.district_objects.map do |district|
-      if district.economic_profile.data[:children_in_poverty] == {}
-        "none"
-      else
-        calculate_avarage_percent_of_children_in_poverty(district)
-      end
-    end.delete_if {|average| average == "none"}
+    district_averages = @dr.district_objects.select do |district|
+      district.economic_profile.data[:children_in_poverty] != {}
+    end.map do |district|
+      calculate_avarage_percent_of_children_in_poverty(district)
+    end
     DataUtilities.truncate_value(district_averages.reduce(:+) / district_averages.length)
   end
 

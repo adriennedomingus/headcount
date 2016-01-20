@@ -32,13 +32,12 @@ class StatewideDataFormatter
   def self.add_data_to_existing_statewide_object(statewide_objects, row, data_type, delimeter)
     subject = row[delimeter].gsub(/\W/, "_").downcase.to_sym
     statewide_objects.each do |statewide|
-      if row[:location] == statewide.name
-        statewide.data[data_type][row[:timeframe].to_i] ||= {}
-        if UNDEFINED_DATA.include?(row[:data])
-          statewide.data[data_type][row[:timeframe].to_i][subject] = row[:data]
-        else
-          statewide.data[data_type][row[:timeframe].to_i][subject] = DataUtilities.truncate_value(row[:data].to_f)
-        end
+      next unless row[:location] == statewide.name
+      statewide.data[data_type][row[:timeframe].to_i] ||= {}
+      if UNDEFINED_DATA.include?(row[:data])
+        statewide.data[data_type][row[:timeframe].to_i][subject] = row[:data]
+      else
+        statewide.data[data_type][row[:timeframe].to_i][subject] = DataUtilities.truncate_value(row[:data].to_f)
       end
     end
   end

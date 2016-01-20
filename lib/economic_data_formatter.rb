@@ -48,10 +48,13 @@ class EconomicDataFormatter
       matching_epo = economic_profile_objects.find do |economic_profile|
         row[:location].upcase == economic_profile.name.upcase
       end
-      if row[:dataformat] == "Percent"
+      case row[:dataformat]
+      when "Percent"
         matching_epo.set_free_or_reduced_price_lunch_percentage(row[:timeframe].to_i, DataUtilities.truncate_value(row[:data].to_f))
-      elsif row[:dataformat] == "Number"
+      when "Number"
         matching_epo.set_free_or_reduced_price_lunch_total(row[:timeframe].to_i, row[:data].to_i)
+      else
+        next
       end
     end
   end

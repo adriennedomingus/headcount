@@ -1,7 +1,6 @@
 require_relative 'enrollment_data_formatter'
 
 class EnrollmentRepository
-
   attr_reader :enrollment_objects
 
   def initialize(enrollment_objects = [])

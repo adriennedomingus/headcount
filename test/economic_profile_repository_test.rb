@@ -34,6 +34,10 @@ class EconomicProfileRepositoryTest < Minitest::Test
     assert_equal result, @epr.find_by_name("ACADEMY 20").data
   end
 
+  def test_it_skips_lines_that_have_crappy_datas
+    refute @epr.find_by_name("ACADEMY 20").data[:free_or_reduced_price_lunch][1900]
+  end
+
   def test_it_finds_median_household_income_in_specific_year
     district = @epr.find_by_name("ACADEMY 20")
 
