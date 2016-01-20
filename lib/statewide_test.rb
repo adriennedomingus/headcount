@@ -19,9 +19,10 @@ class StatewideTest
     if !POSSIBLE_GRADES.include?(grade)
       raise UnknownDataError
     end
-    if grade == 3
+    case grade
+    when 3
       data[:third_grade]
-    elsif grade == 8
+    when 8
       data[:eighth_grade]
     end
   end

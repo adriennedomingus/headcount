@@ -40,9 +40,7 @@ class DistrictDataFormatter
 
   def self.match_enrollment_objects_to_district_object(district_objects)
     district_objects.each do |district|
-      match = @er.enrollment_objects.find do |enrollment|
-        enrollment.data[:name].upcase == district.name
-      end
+      match = find_matching_object_by_name(district, @er.enrollment_objects)
       district.enrollment = Enrollment.new(match.data)
     end
   end
@@ -51,10 +49,14 @@ class DistrictDataFormatter
     @str = StatewideTestRepository.new
     @str.load_data(:statewide_testing => hash[:statewide_testing])
     district_objects.each do |district|
-      match = @str.statewide_objects.find do |statewide|
-        statewide.data[:name].upcase == district.name
-      end
+      match = find_matching_object_by_name(district, @str.statewide_objects)
       district.statewide_test = StatewideTest.new(match.data)
+    end
+  end
+
+  def self.find_matching_object_by_name(district, repository)
+    repository.find do |data_holder|
+      data_holder.data[:name].upcase == district.name
     end
   end
 
