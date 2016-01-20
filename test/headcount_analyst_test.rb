@@ -141,7 +141,7 @@ class HeadcountAnalystTest < MiniTest::Test
     assert_equal 66880.4, @ha.high_income_disparity.matching_districts[1].median_household_income
     assert_equal 0.252, @ha.high_income_disparity.matching_districts[1].children_in_poverty_rate
     assert_equal 57408.0, @ha.high_income_disparity.statewide_average.median_household_income
-    assert_equal 0.181, @ha.high_income_disparity.statewide_average.children_in_poverty_rate
+    assert_equal 0.182, @ha.high_income_disparity.statewide_average.children_in_poverty_rate
   end
 
   def test_high_income_disparity_returns_result_set_and_entries
@@ -150,6 +150,6 @@ class HeadcountAnalystTest < MiniTest::Test
   end
 
   def test_calculates_statewide_average_for_children_in_poverty
-    assert_equal 0.181, @ha.calculate_statewide_average_children_in_poverty
+    assert_equal 0.182, @ha.calculate_statewide_average_children_in_poverty
   end
 end

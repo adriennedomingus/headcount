@@ -14,17 +14,15 @@ class EconomicProfile
   def median_household_income_in_year(year)
     years = (2005..2015).to_a
     raise UnknownDataError if !years.include?(year)
-    sum = 0
-    divisor = 0
     data_to_analyze = data[:median_household_income]
-    data_to_analyze.keys.each do |all_years|
+    included = data_to_analyze.keys.map do |all_years|
       range = (all_years[0]..all_years[1]).to_a
       if range.include?(year)
-        divisor += 1
-        sum += data_to_analyze[all_years]
+        data_to_analyze[all_years]
       end
-    end
-    sum.to_f / divisor.to_f
+    end.delete_if { |value| value == nil }
+    sum = included.reduce(:+)
+    sum.to_f / included.length.to_f
   end
 
   def median_household_income_average

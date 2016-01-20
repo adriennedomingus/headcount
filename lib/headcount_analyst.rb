@@ -173,7 +173,7 @@ class HeadcountAnalyst
 
   def calculate_statewide_average_children_in_poverty
     district_averages = @dr.district_objects.map do |district|
-      if district.name == "COLORADO"
+      if district.economic_profile.data[:children_in_poverty] == {}
         "none"
       else
         calculate_avarage_percent_of_children_in_poverty(district)
