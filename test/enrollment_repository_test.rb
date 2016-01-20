@@ -1,3 +1,5 @@
+require 'simplecov'
+SimpleCov.start
 require 'minitest/autorun'
 require 'minitest/pride'
 require_relative '../lib/enrollment_repository'
@@ -12,6 +14,15 @@ class EnrollmentRepositoryTest < MiniTest::Test
               :kindergarten_participation=>{2007=>0.067, 2006=>0.032, 2005=>0.033, 2004=>0.016, 2008=>0.118, 2009=>0.1, 2010=>0.157, 2011=>0.248, 2012=>0.23, 2013=>0.0, 2014=>0.279},
               :high_school_graduation=>{2010=>0.847, 2011=>0.883, 2012=>0.897, 2013=>0.909, 2014=>0.918}}
     assert_equal result, @er.enrollment_objects[7].data
+  end
+
+  def test_loads_data_without_high_school_graduation_data
+    er = EnrollmentRepository.new
+    er.load_data({:enrollment => {:kindergarten => "./data/Kindergartners in full-day program.csv"}})
+    result = {:name=>"BOULDER VALLEY RE 2",
+              :kindergarten_participation=>{2007=>0.067, 2006=>0.032, 2005=>0.033, 2004=>0.016, 2008=>0.118, 2009=>0.1, 2010=>0.157, 2011=>0.248, 2012=>0.23, 2013=>0.0, 2014=>0.279},
+              :high_school_graduation => {}}
+    assert_equal result, er.enrollment_objects[7].data
   end
 
   def setup

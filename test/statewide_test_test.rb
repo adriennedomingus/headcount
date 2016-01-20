@@ -1,3 +1,5 @@
+require 'simplecov'
+SimpleCov.start
 require_relative '../lib/statewide_test'
 require 'minitest/autorun'
 require 'minitest/pride'

@@ -1,3 +1,5 @@
+require 'simplecov'
+SimpleCov.start
 require_relative '../lib/statewide_test_repository'
 require 'minitest/autorun'
 require 'minitest/pride'
@@ -57,6 +59,10 @@ class StatewideTestRepositoryTest < MiniTest::Test
 
     assert_raises(UnknownDataError) do
       testing.proficient_for_subject_by_race_in_year(:chicken, :white, 2013)
+    end
+
+    assert_raises(UnknownDataError) do
+      testing.proficient_by_race_or_ethnicity(:chicken)
     end
   end
 end

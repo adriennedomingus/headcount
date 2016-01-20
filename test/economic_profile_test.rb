@@ -1,3 +1,5 @@
+require 'simplecov'
+SimpleCov.start
 require_relative '../lib/economic_profile.rb'
 require 'minitest/autorun'
 require 'minitest/pride'

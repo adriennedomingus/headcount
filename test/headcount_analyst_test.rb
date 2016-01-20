@@ -1,3 +1,5 @@
+require 'simplecov'
+SimpleCov.start
 require 'minitest/autorun'
 require 'minitest/pride'
 require_relative '../lib/headcount_analyst'
@@ -70,8 +72,8 @@ class HeadcountAnalystTest < MiniTest::Test
     refute @ha.kindergarten_participation_correlates_with_high_school_graduation(for: "STATEWIDE")
   end
 
-  def test_kindergarten_graduation_correlation
-    assert @ha.kindergarten_graduation_correlation("COLORADO")
+  def test_kindergarten_participation_correlates_with_graduation
+    assert @ha.true_or_false_kindergarten_correlates_with_graduation("COLORADO")
   end
 
   def test_kindergarten_correlation_with_graduation_across_specified_districts
