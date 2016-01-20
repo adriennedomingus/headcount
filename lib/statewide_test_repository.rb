@@ -11,9 +11,9 @@ class StatewideTestRepository
     StatewideDataFormatter.load_testing_data(hash, statewide_objects)
   end
 
-  def find_by_name(name)
+  def find_by_name(district_name)
     statewide_objects.find do |statewide|
-      name.upcase == statewide.name.upcase
+      district_name.upcase == statewide.name.upcase
     end
   end
 end

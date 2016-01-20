@@ -31,10 +31,10 @@ class HeadcountAnalyst
     DataUtilities.truncate_value(variation)
   end
 
-  def kindergarten_participation_rate_variation_trend(district_1, district_2)
+  def kindergarten_participation_rate_variation_trend(district1_name, district2_name)
     result = Hash.new
-    district1_participation = @dr.find_by_name(district_1).enrollment.data[:kindergarten_participation]
-    district2_participation = @dr.find_by_name(district_2[:against]).enrollment.data[:kindergarten_participation]
+    district1_participation = @dr.find_by_name(district1_name).enrollment.data[:kindergarten_participation]
+    district2_participation = @dr.find_by_name(district2_name[:against]).enrollment.data[:kindergarten_participation]
     district1_participation.each do |key, value|
       d1_truncated_value = DataUtilities.truncate_value(value)
       d2_truncated_value = DataUtilities.truncate_value(district2_participation[key])
@@ -43,8 +43,8 @@ class HeadcountAnalyst
     result
   end
 
-  def kindergarten_variation(district)
-    kindergarten_participation_rate_variation(district, :against => "COLORADO")
+  def kindergarten_variation(district_name)
+    kindergarten_participation_rate_variation(district_name, :against => "COLORADO")
   end
 
   def graduation_variation(district_name)
@@ -61,15 +61,15 @@ class HeadcountAnalyst
     DataUtilities.truncate_value(result)
   end
 
-  def kindergarten_participation_correlates_with_high_school_graduation(district)
-    if district.keys == [:across]
-      aggregated = district[:across].map do |district_name|
+  def kindergarten_participation_correlates_with_high_school_graduation(district_name)
+    if district_name.keys == [:across]
+      aggregated = district_name[:across].map do |district_name|
         true_or_false_kindergarten_correlates_with_graduation(district_name)
       end
       aggregated_greater_or_lesser_than_seventy_percent(aggregated)
-    elsif district[:for] != "STATEWIDE"
-      true_or_false_kindergarten_correlates_with_graduation(district[:for])
-    elsif district[:for] == "STATEWIDE"
+    elsif district_name[:for] != "STATEWIDE"
+      true_or_false_kindergarten_correlates_with_graduation(district_name[:for])
+    elsif district_name[:for] == "STATEWIDE"
       statewide_aggregated = @dr.district_objects.map do |school_district|
         true_or_false_kindergarten_correlates_with_graduation(school_district.name)
       end
@@ -77,8 +77,8 @@ class HeadcountAnalyst
     end
   end
 
-  def true_or_false_kindergarten_correlates_with_graduation(district)
-    variation = kindergarten_participation_against_high_school_graduation(district)
+  def true_or_false_kindergarten_correlates_with_graduation(district_name)
+    variation = kindergarten_participation_against_high_school_graduation(district_name)
     variation > 0.6 && variation < 1.5 ? true : false
   end
 
@@ -198,11 +198,11 @@ class HeadcountAnalyst
     calculate_average_percent(district.enrollment, :high_school_graduation)
   end
 
-  def calculate_average_percent(object, data_to_average)
-    total = object.data[data_to_average].values.reduce do |sum, participation|
+  def calculate_average_percent(type, data_to_average)
+    total = type.data[data_to_average].values.reduce do |sum, participation|
        sum + DataUtilities.truncate_value(participation)
     end
-    average = DataUtilities.truncate_value(total) / object.data[data_to_average].length
+    average = DataUtilities.truncate_value(total) / type.data[data_to_average].length
     DataUtilities.truncate_value(average)
   end
 end

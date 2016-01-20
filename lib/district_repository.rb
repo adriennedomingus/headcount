@@ -2,6 +2,7 @@ require_relative 'district_data_formatter'
 
 class DistrictRepository
   attr_reader :district_objects, :name
+
   def initialize(district_objects = [])
     @district_objects = district_objects
   end
@@ -10,9 +11,9 @@ class DistrictRepository
     DistrictDataFormatter.load_all_data(hash, district_objects)
   end
 
-  def find_by_name(name)
+  def find_by_name(district_name)
     district_objects.find do |district|
-      district.enrollment.name.upcase == name.upcase
+      district.enrollment.name.upcase == district_name.upcase
     end
   end
 

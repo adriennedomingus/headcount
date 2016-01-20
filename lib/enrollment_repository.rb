@@ -12,9 +12,9 @@ class EnrollmentRepository
     EnrollmentDataFormatter.load_enrollment_data(hash, enrollment_objects)
   end
 
-  def find_by_name(name)
+  def find_by_name(district_name)
     @enrollment_objects.find do |enrollment|
-      enrollment.name == name.upcase
+      enrollment.name == district_name.upcase
     end
   end
 end

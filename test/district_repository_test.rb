@@ -55,29 +55,29 @@ class DistrictRepositoryTest < MiniTest::Test
    assert_equal "ARCHULETA COUNTY 50 JT", dr.district_objects[3].name
   end
 
-  def test_find_by_name_method_returns_instantiated_object_name
+  def test_find_by_name_method_returns_instantiated_object_with_name
     assert_equal "ADAMS-ARAPAHOE 28J", @dr.find_by_name("ADAMS-ARAPAHOE 28J").name
   end
 
   def test_find_by_name_is_not_case_insensitive
-    assert_equal "ADAMS-ARAPAHOE 28J", @dr.find_by_name("Adams-Arapahoe 28J").name
+    assert_equal "ADAMS-ARAPAHOE 28J", @dr.find_by_name("AdAMs-ArapaHoe 28J").name
   end
 
-  def test_returns_nil_if_district_by_name_doesnt_exist
+  def test_returns_nil_if_district_by_name_does_not_exist
       assert_equal nil, @dr.find_by_name("Aldkfjalkd")
   end
 
-  def test_find_all_matching
+  def test_find_all_districts_that_match_name_fragment
     assert_equal 2, @dr.find_all_matching("Adams").count
   end
 
-  def test_relationship_with_enrollment_data
+  def test_districts_have_enrollment_data
     district = @dr.find_by_name("ACADEMY 20")
 
     assert_equal 0.436, district.enrollment.kindergarten_participation_in_year(2010)
   end
 
-  def test_relationship_with_statwide_testing_data
+  def test_districts_have_statewide_test_data
     district = @dr.find_by_name("ACADEMY 20")
     result = {2008=>{:math=>0.857, :reading=>0.866, :writing=>0.671},
               2009=>{:math=>0.824, :reading=>0.862, :writing=>0.706},

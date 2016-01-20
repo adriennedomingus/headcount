@@ -7,13 +7,17 @@ class EconomicProfileRepository
     @economic_profile_objects = []
   end
 
+  def name
+    economic_profile.data[:name]
+  end
+
   def load_data(hash)
     EconomicDataFormatter.load_economic_data(hash, economic_profile_objects)
   end
 
-  def find_by_name(name)
+  def find_by_name(district_name)
     economic_profile_objects.select do |economic_profile|
-      if name.upcase == economic_profile.data[:name].upcase
+      if district_name.upcase == economic_profile.name.upcase
         return economic_profile
       end
     end
