@@ -1,3 +1,5 @@
+require 'csv'
+
 class DataUtilities
   def self.truncate_value(value)
     (sprintf "%.3f", value).to_f

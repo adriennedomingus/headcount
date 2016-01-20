@@ -13,9 +13,7 @@ class EconomicProfile
 
   def median_household_income_in_year(year)
     years = (2005..2015).to_a
-    if !years.include?(year)
-      raise UnknownDataError
-    end
+    raise UnknownDataError if !years.include?(year)
     sum = 0
     divisor = 0
     data_to_analyze = data[:median_household_income]
@@ -31,9 +29,9 @@ class EconomicProfile
 
   def median_household_income_average
     total = data[:median_household_income].values.reduce do |sum, income|
-      sum += income
-    end
-    total.to_f / (data[:median_household_income].keys.length).to_f
+      sum + income
+    end.to_f
+    total / (data[:median_household_income].keys.length).to_f
   end
 
   def children_in_poverty_in_year(year)

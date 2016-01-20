@@ -1,4 +1,3 @@
-require 'csv'
 require_relative 'enrollment_repository'
 require_relative 'economic_profile_repository'
 require_relative 'statewide_test_repository'
@@ -7,12 +6,12 @@ require_relative 'data_utilities'
 
 class DistrictDataFormatter
 
-  def self.read_district_files(hash)
+  def self.read_district_files
     @contents = DataUtilities.open_csv( "./data/Kindergartners in full-day program.csv")
   end
 
   def self.load_all_data(hash, district_objects)
-    read_district_files(hash)
+    read_district_files
     @contents.each do |row|
       if DataUtilities.no_preexisting_object_by_current_name(district_objects, row)
         district_objects << District.new({:name => row[:location]})

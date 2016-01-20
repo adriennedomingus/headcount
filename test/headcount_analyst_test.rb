@@ -16,18 +16,12 @@ class HeadcountAnalystTest < MiniTest::Test
     assert_equal "ADAMS-ARAPAHOE 28J", @ha.dr.district_objects[2].name
   end
 
-  def test_can_find_by_name_each_district_passed_to_kindergarten_participation_rate_variation
-    @ha.kindergarten_participation_rate_variation('ACADEMY 20', :against => 'COLORADO')
-
-    assert_equal "ACADEMY 20", @ha.district1.name
-    assert_equal "COLORADO", @ha.district2.name
-  end
-
   def test_calculates_kindergarten_average
-    @ha.kindergarten_participation_rate_variation('ACADEMY 20', :against => 'COLORADO')
+    district1 = @ha.dr.find_by_name('ACADEMY 20')
+    district2 = @ha.dr.find_by_name('COLORADO')
 
-    assert_equal 0.407, @ha.calculate_kindergarten_average(@ha.district1)
-    assert_equal 0.53, @ha.calculate_kindergarten_average(@ha.district2)
+    assert_equal 0.407, @ha.calculate_kindergarten_average(district1)
+    assert_equal 0.53, @ha.calculate_kindergarten_average(district2)
   end
 
   def test_calculates_high_school_graduation_average

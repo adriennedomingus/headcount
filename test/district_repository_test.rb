@@ -67,7 +67,7 @@ class DistrictRepositoryTest < MiniTest::Test
 
   def test_relationship_with_economic_profile_data
     district = @dr.find_by_name("ACADEMY 20")
-
+    
     assert_equal 0.012, district.economic_profile.title_i_in_year(2013)
   end
 end

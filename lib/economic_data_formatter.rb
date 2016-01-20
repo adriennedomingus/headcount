@@ -1,4 +1,3 @@
-require 'csv'
 require_relative 'data_utilities'
 require_relative 'economic_profile'
 
@@ -28,7 +27,7 @@ class EconomicDataFormatter
       match = economic_profile_objects.find do |economic_profile|
         row[:location].upcase == economic_profile.name.upcase
       end
-      year = row[:timeframe].split("-").map! { |year| year.to_i}
+      year = row[:timeframe].split("-").map! { |timeframe| timeframe.to_i}
       match.data[:median_household_income][year] = row[:data].to_i
     end
   end
@@ -36,7 +35,9 @@ class EconomicDataFormatter
   def self.load_children_in_poverty_data(economic_profile_objects)
     @cip_contents.each do |row|
       next unless row[:dataformat] == "Percent"
-      matching_epo = economic_profile_objects.find { |economic_profile| row[:location].upcase == economic_profile.name.upcase }
+      matching_epo = economic_profile_objects.find do |economic_profile|
+        row[:location].upcase == economic_profile.name.upcase
+      end
       matching_epo.data[:children_in_poverty][row[:timeframe].to_i] = DataUtilities.truncate_value(row[:data].to_f)
     end
   end
@@ -71,6 +72,4 @@ class EconomicDataFormatter
     :free_or_reduced_price_lunch => {},
     :title_i => {}})
   end
-
-
 end
