@@ -35,10 +35,10 @@ class HeadcountAnalyst
     district1_participation = @dr.find_by_name(district1_name).enrollment.data[:kindergarten_participation].values
     district2_participation = @dr.find_by_name(district2_name[:against]).enrollment.data[:kindergarten_participation].values
     years = @dr.find_by_name(district2_name[:against]).enrollment.data[:kindergarten_participation].keys
-    intermediate_step = district1_participation.map.with_index do |participation, index|
+    variation = district1_participation.map.with_index do |participation, index|
       DataUtilities.truncate_value(participation / district2_participation[index])
     end
-    years.zip(intermediate_step).to_h
+    years.zip(variation).to_h
   end
 
   def kindergarten_variation(district_name)
@@ -99,15 +99,21 @@ class HeadcountAnalyst
     rs = ResultSet.new(:matching_districts => [],
                        :statewide_average => ResultEntry.new(
                        {:name => "COLORADO",
-                       :free_and_reduced_price_lunch_rate => calculate_average_frl_number(state),
-                       :children_in_poverty_rate => calculate_statewide_average_children_in_poverty,
-                       :high_school_graduation_rate => calculate_graduation_average(state)}))
+                       :free_and_reduced_price_lunch_rate =>
+                         calculate_average_frl_number(state),
+                       :children_in_poverty_rate =>
+                         calculate_statewide_average_children_in_poverty,
+                       :high_school_graduation_rate =>
+                         calculate_graduation_average(state)}))
     matches.each do |match|
       rs.matching_districts << ResultEntry.new(
       {:name => match.name,
-      :free_and_reduced_price_lunch_rate => calculate_average_frl_number(match),
-      :children_in_poverty_rate => calculate_avarage_percent_of_children_in_poverty(match),
-      :high_school_graduation_rate => calculate_graduation_average(match)})
+      :free_and_reduced_price_lunch_rate =>
+       calculate_average_frl_number(match),
+      :children_in_poverty_rate =>
+       calculate_avarage_percent_of_children_in_poverty(match),
+      :high_school_graduation_rate =>
+       calculate_graduation_average(match)})
     end
     rs
   end
@@ -115,9 +121,12 @@ class HeadcountAnalyst
   def find_districts_with_high_poverty_and_hs_graduation
     state = @dr.find_by_name("COLORADO")
     @dr.district_objects.select do |district|
-      calculate_average_frl_number(district) > calculate_average_frl_number(state) &&
-      calculate_graduation_average(district) > calculate_graduation_average(state) &&
-      calculate_avarage_percent_of_children_in_poverty(district) > calculate_statewide_average_children_in_poverty
+      calculate_average_frl_number(district) >
+      calculate_average_frl_number(state) &&
+      calculate_graduation_average(district) >
+      calculate_graduation_average(state) &&
+      calculate_avarage_percent_of_children_in_poverty(district) >
+      calculate_statewide_average_children_in_poverty
     end
   end
 
@@ -125,14 +134,19 @@ class HeadcountAnalyst
     state = @dr.find_by_name("COLORADO")
     matches = find_districts_with_high_income_disparity
     rs = ResultSet.new(:matching_districts => [], :statewide_average =>
-        ResultEntry.new({:median_household_income => calculate_average_of_median_household_income(state),
-                        :children_in_poverty_rate => calculate_statewide_average_children_in_poverty,
-                        :name => "COLORADO"}))
+         ResultEntry.new({:median_household_income =>
+                          calculate_average_of_median_household_income(state),
+                          :children_in_poverty_rate =>
+                          calculate_statewide_average_children_in_poverty,
+                          :name => "COLORADO"}))
     matches.each do |match|
       rs.matching_districts << ResultEntry.new(
-      {:median_household_income => calculate_average_of_median_household_income(match),
-      :children_in_poverty_rate => calculate_avarage_percent_of_children_in_poverty(match),
-      :name => match.enrollment.data[:name]})
+      {:median_household_income =>
+        calculate_average_of_median_household_income(match),
+        :children_in_poverty_rate =>
+        calculate_avarage_percent_of_children_in_poverty(match),
+        :name =>
+        match.enrollment.data[:name]})
     end
     rs
   end

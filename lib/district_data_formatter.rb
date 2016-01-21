@@ -7,7 +7,8 @@ require_relative 'data_utilities'
 class DistrictDataFormatter
 
   def self.read_district_files
-    @contents = DataUtilities.open_csv( "./data/Kindergartners in full-day program.csv")
+    @contents =
+    DataUtilities.open_csv("./data/Kindergartners in full-day program.csv")
   end
 
   def self.load_all_data(hash, district_objects)

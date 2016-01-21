@@ -38,7 +38,8 @@ class EconomicDataFormatter
       matching_epo = economic_profile_objects.find do |economic_profile|
         row[:location].upcase == economic_profile.name.upcase
       end
-      matching_epo.data[:children_in_poverty][row[:timeframe].to_i] = DataUtilities.truncate_value(row[:data].to_f)
+      matching_epo.data[:children_in_poverty][row[:timeframe].to_i] =
+      DataUtilities.truncate_value(row[:data].to_f)
     end
   end
 
@@ -64,15 +65,17 @@ class EconomicDataFormatter
       match = economic_profile_objects.find do |economic_profile|
         row[:location].upcase == economic_profile.name.upcase
       end
-      match.data[:title_i][row[:timeframe].to_i] = DataUtilities.truncate_value(row[:data].to_f)
+      match.data[:title_i][row[:timeframe].to_i] =
+      DataUtilities.truncate_value(row[:data].to_f)
     end
   end
 
   def self.create_new_economic_profile_object_hash(economic_profile_objects, row)
-    economic_profile_objects << EconomicProfile.new({:name => row[:location].upcase,
-    :median_household_income => {},
-    :children_in_poverty => {},
-    :free_or_reduced_price_lunch => {},
-    :title_i => {}})
+    economic_profile_objects << EconomicProfile.new(
+                                {:name => row[:location].upcase,
+                                :median_household_income => {},
+                                :children_in_poverty => {},
+                                :free_or_reduced_price_lunch => {},
+                                :title_i => {}})
   end
 end

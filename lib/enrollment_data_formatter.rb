@@ -7,7 +7,8 @@ class EnrollmentDataFormatter
     category = hash[:enrollment]
     @kindergarten_contents = DataUtilities.open_csv(category[:kindergarten])
     if category[:high_school_graduation]
-      @high_school_contents = DataUtilities.open_csv(category[:high_school_graduation])
+      @high_school_contents =
+      DataUtilities.open_csv(category[:high_school_graduation])
     end
   end
 
@@ -30,13 +31,14 @@ class EnrollmentDataFormatter
     match = enrollment_objects.find do |enrollment|
       row[:location].upcase == enrollment.name.upcase
     end
-    match.data[success][row[:timeframe].to_i] = DataUtilities.truncate_value(row[:data].to_f)
+    match.data[success][row[:timeframe].to_i] =
+    DataUtilities.truncate_value(row[:data].to_f)
   end
 
   def self.create_new_enrollment_object(enrollment_objects, row)
     enrollment_objects << Enrollment.new({:name => row[:location].upcase,
-    :kindergarten_participation => {},
-    :high_school_graduation => {}})
+                                          :kindergarten_participation => {},
+                                          :high_school_graduation => {}})
   end
 
 end

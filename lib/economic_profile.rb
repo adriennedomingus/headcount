@@ -37,7 +37,8 @@ class EconomicProfile
   end
 
   def free_or_reduced_price_lunch_percentage_in_year(year)
-    data[:free_or_reduced_price_lunch][year][:percentage] ||= raise UnknownDataError
+    data[:free_or_reduced_price_lunch][year][:percentage] ||=
+    raise UnknownDataError
   end
 
   def free_or_reduced_price_lunch_number_in_year(year)
