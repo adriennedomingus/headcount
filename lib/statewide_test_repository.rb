@@ -5,10 +5,11 @@ class StatewideTestRepository
 
   def initialize
     @statewide_objects = []
+    @formatter = StatewideDataFormatter.new
   end
 
-  def load_data(hash)
-    StatewideDataFormatter.load_testing_data(hash, statewide_objects)
+  def load_data(files)
+    @formatter.load_testing_data(files, statewide_objects)
   end
 
   def find_by_name(district_name)

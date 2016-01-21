@@ -9,7 +9,7 @@ class DataUtilities
     CSV.open file, headers: true, header_converters: :symbol
   end
 
-  def self.no_preexisting_object_by_current_name(type_of_object, row)
+  def self.no_object_by_current_name(type_of_object, row)
     type_of_object.empty? || type_of_object.none? do |object|
       object.name == row[:location].upcase
     end

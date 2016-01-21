@@ -5,10 +5,11 @@ class EnrollmentRepository
 
   def initialize(enrollment_objects = [])
     @enrollment_objects = enrollment_objects
+    @formatter = EnrollmentDataFormatter.new
   end
 
-  def load_data(hash)
-    EnrollmentDataFormatter.load_enrollment_data(hash, enrollment_objects)
+  def load_data(files)
+    @formatter.load_enrollment_data(files, enrollment_objects)
   end
 
   def find_by_name(district_name)

@@ -5,10 +5,11 @@ class DistrictRepository
 
   def initialize(district_objects = [])
     @district_objects = district_objects
+    @formatter = DistrictDataFormatter.new
   end
 
-  def load_data(hash)
-    DistrictDataFormatter.load_all_data(hash, district_objects)
+  def load_data(files)
+    @formatter.load_all_data(files, district_objects)
   end
 
   def find_by_name(district_name)

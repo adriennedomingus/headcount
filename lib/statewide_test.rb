@@ -7,7 +7,8 @@ class StatewideTest
     @data = data
   end
 
-  POSSIBLE_RACES = [:all_students, :asian, :black, :hawaiian_pacific_islander, :hispanic, :native_american, :two_or_more, :white]
+  POSSIBLE_RACES = [:all_students, :asian, :black, :hawaiian_pacific_islander,
+                    :hispanic, :native_american, :two_or_more, :white]
   POSSIBLE_GRADES = [3, 8]
   POSSIBLE_SUBJECTS = [:math, :reading, :writing]
 

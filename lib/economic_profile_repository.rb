@@ -5,14 +5,11 @@ class EconomicProfileRepository
 
   def initialize
     @economic_profile_objects = []
+    @formatter = EconomicDataFormatter.new
   end
 
-  def name
-    economic_profile.data[:name]
-  end
-
-  def load_data(hash)
-    EconomicDataFormatter.load_economic_data(hash, economic_profile_objects)
+  def load_data(files)
+    @formatter.load_economic_data(files, economic_profile_objects)
   end
 
   def find_by_name(district_name)
