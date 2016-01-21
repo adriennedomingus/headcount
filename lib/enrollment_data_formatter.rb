@@ -27,11 +27,10 @@ class EnrollmentDataFormatter
   end
 
   def self.match_enrollment_data_to_district_data(enrollment_objects, success, row)
-    enrollment_objects.each do |enrollment|
-      if row[:location].upcase == enrollment.name.upcase
-        enrollment.data[success][row[:timeframe].to_i] = DataUtilities.truncate_value(row[:data].to_f)
-      end
+    match = enrollment_objects.find do |enrollment|
+      row[:location].upcase == enrollment.name.upcase
     end
+    match.data[success][row[:timeframe].to_i] = DataUtilities.truncate_value(row[:data].to_f)
   end
 
   def self.create_new_enrollment_object(enrollment_objects, row)

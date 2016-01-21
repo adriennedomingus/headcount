@@ -129,8 +129,11 @@ class HeadcountAnalystTest < MiniTest::Test
   end
 
   def test_high_poverty_and_high_school_graduation
+    assert_equal 2, @ha.high_poverty_and_high_school_graduation.matching_districts.count
     assert_equal 0.603, @ha.high_poverty_and_high_school_graduation.matching_districts[1].free_and_reduced_price_lunch_rate
     assert_equal 0.35, @ha.high_poverty_and_high_school_graduation.statewide_average.free_and_reduced_price_lunch_rate
+    assert_equal 0.182, @ha.high_poverty_and_high_school_graduation.statewide_average.children_in_poverty_rate
+    assert_equal 0.752, @ha.high_poverty_and_high_school_graduation.statewide_average.high_school_graduation_rate
   end
 
   def test_high_poverty_and_hs_graduation_returns_result_set_and_entries
@@ -147,6 +150,7 @@ class HeadcountAnalystTest < MiniTest::Test
   end
 
   def test_high_income_disparity_returns_result_set_and_entries
+    assert @ha.high_income_disparity.matching_districts.is_a?(Array)
     assert @ha.high_income_disparity.is_a?(ResultSet)
     assert @ha.high_income_disparity.statewide_average.is_a?(ResultEntry)
   end

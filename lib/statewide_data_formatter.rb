@@ -37,7 +37,8 @@ class StatewideDataFormatter
       if UNDEFINED_DATA.include?(row[:data])
         statewide.data[data_type][row[:timeframe].to_i][subject] = row[:data]
       else
-        statewide.data[data_type][row[:timeframe].to_i][subject] = DataUtilities.truncate_value(row[:data].to_f)
+        statewide.data[data_type][row[:timeframe].to_i][subject] =
+        DataUtilities.truncate_value(row[:data].to_f)
       end
     end
   end

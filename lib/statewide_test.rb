@@ -31,20 +31,19 @@ class StatewideTest
     if !POSSIBLE_RACES.include?(race)
       raise UnknownDataError
     end
-    result = {}
-    math_data = data[:math]
-    math_data.each do |year, _|
-      result[year] = {:math => math_data[year][race]}
+    result = Hash.new
+    data[:math].each do |year, _|
+      result[year] = {:math => data[:math][year][race]}
     end
-    add_data_by_race(data[:reading], result, :reading, race)
-    add_data_by_race(data[:writing], result, :writing, race)
+    add_data_by_race(result, :reading, race)
+    add_data_by_race(result, :writing, race)
     result
   end
 
-  def add_data_by_race(dataset, result, subject, race)
-    dataset.each do |year, data|
-      data.each do
-        result[year][subject] = dataset[year][race]
+  def add_data_by_race(result, subject, race)
+    data[subject].each do |year, data_entry|
+      data_entry.each do
+        result[year][subject] = data[subject][year][race]
       end
     end
   end
